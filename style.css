@@ -7,7 +7,7 @@
   --pp-shadow: 0 22px 60px rgba(56, 43, 55, .22);
 }
 
-#st-pixel-pet-root { all: initial; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+#st-pixel-pet-root { all: initial; position: fixed !important; inset: 0 !important; width: 100vw; height: 100vh; z-index: 2147483647 !important; pointer-events: none; display: block; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
 #st-pixel-pet-root *, #st-pixel-pet-root *::before, #st-pixel-pet-root *::after { box-sizing: border-box; }
 #st-pixel-pet-root button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 
@@ -15,7 +15,7 @@
   position: fixed; right: max(14px, env(safe-area-inset-right)); bottom: max(14px, env(safe-area-inset-bottom));
   width: 58px; height: 58px; border: 2px solid rgba(67,54,65,.32); border-radius: 20px;
   background: linear-gradient(180deg,#fff9fb,#f6d9e3); box-shadow: 0 10px 24px rgba(59,42,57,.22), inset 0 1px 0 #fff;
-  z-index: 2147483000; cursor: pointer; padding: 0; transition: transform .18s ease, box-shadow .18s ease;
+  z-index: 2147483647; cursor: pointer; pointer-events:auto; padding: 0; transition: transform .18s ease, box-shadow .18s ease;
 }
 .pixel-pet-fab:hover { transform: translateY(-3px) rotate(-2deg); box-shadow: 0 14px 28px rgba(59,42,57,.27), inset 0 1px 0 #fff; }
 .pixel-pet-fab.is-open { transform: scale(.93) rotate(4deg); }
@@ -64,3 +64,6 @@
 @media (prefers-reduced-motion: reduce){
   #st-pixel-pet-root *,#st-pixel-pet-root *::before,#st-pixel-pet-root *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Android / WebView fallback: keep the launch button visible above SillyTavern's layout layers. */
+#st-pixel-pet-root .pixel-pet-fab { position: fixed !important; right: max(14px, env(safe-area-inset-right, 0px)) !important; bottom: max(14px, env(safe-area-inset-bottom, 0px)) !important; }

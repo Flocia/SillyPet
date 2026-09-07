@@ -53,3 +53,10 @@ SillyPet/
 ## 数据
 
 状态存储在浏览器 `localStorage`。不向聊天消息写入数据，也不请求网络接口。
+
+
+### v1.2.0 Android compatibility
+- Third-party manifest no longer depends on `hooks.activate`.
+- Self-initialization uses DOM ready plus SillyTavern/jQuery ready when available.
+- The floating layer is a dedicated full-screen fixed top layer and can recover if the host UI rerenders.
+- Optimized for Android WebView/Chrome touch input and safe-area insets.

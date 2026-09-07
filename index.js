@@ -5,7 +5,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v11';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '1.1.1';
+    const VERSION = '1.2.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔子', subtitle: '软乎乎 · 喜欢胡萝卜', color: '#f8f8fb', shadow: '#cfcfd9', eye: '#463b53', blush: '#f3a4ad' },
@@ -398,38 +398,60 @@
         }
     }
 
+    function ensureHost() {
+        if (!document.body) return false;
+        if (!document.getElementById('st-pixel-pet-root')) {
+            buildPanel();
+        }
+        return !!document.getElementById('st-pixel-pet-root');
+    }
+
     function init() {
+        if (!ensureHost()) {
+            window.setTimeout(init, 150);
+            return;
+        }
         if (initialized) {
             updatePanel(false);
             return;
         }
         initialized = true;
         applyDecay();
-        buildPanel();
         startTicker();
         console.info(`${EXT_NAME} v${VERSION} initialized`);
     }
 
-    function onActivate() {
-        init();
+    // Third-party extensions are self-initializing. Do not depend on manifest hooks.
+    function scheduleInit() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init, { once: true });
+        } else {
+            init();
+        }
+        if (window.jQuery) {
+            window.jQuery(init);
+        }
     }
-
-    // Third-party extensions need a self-init fallback for versions/launch paths that do not run manifest hooks.
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
-    else init();
 
     window.addEventListener('pagehide', () => {
         saveState();
         stopTicker();
     });
 
-    // Expose a tiny debug handle without putting implementation details on the global namespace.
+    // Recreate the floating layer if a host UI rerender removes it.
+    function watchBody() {
+        if (!document.body || typeof MutationObserver === 'undefined') return;
+        const observer = new MutationObserver(() => {
+            if (!document.getElementById('st-pixel-pet-root')) init();
+        });
+        observer.observe(document.body, { childList: true });
+    }
+
     window.SillyPet = Object.freeze({ version: VERSION, init, open: () => togglePanel(true), close: () => togglePanel(false) });
-
-    window[`${EXT_ID}_onActivate`] = onActivate;
-
-    // Current SillyTavern supports manifest lifecycle hooks for extension entry modules.
-    // The self-init above remains as a compatibility fallback for older/alternate launch paths.
-    if (typeof globalThis !== 'undefined') globalThis.__SillyPetOnActivate = onActivate;
+    scheduleInit();
+    if (document.readyState === 'loading') {
+        window.addEventListener('DOMContentLoaded', watchBody, { once: true });
+    } else {
+        watchBody();
+    }
 })();
-
