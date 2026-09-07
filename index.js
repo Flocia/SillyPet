@@ -4,7 +4,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '2.4.0';
+    const VERSION = '2.5.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔团子', color: '#f7f7fb', shadow: '#c9cad5', eye: '#413b4d', blush: '#f0a4ad' },
@@ -53,10 +53,10 @@
     let keydownBound = false;
 
     function defaults() {
-        return { petId: 'bunny', name: '小团子', mood: 80, clean: 85, fullness: 74, lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
+        return { petId: 'bunny', name: '小团子', mood: 80, clean: 85, fullness: 74, bornAt: Date.now(), lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
     }
     function loadState() {
-        try { const raw = localStorage.getItem(STORAGE_KEY); return { ...defaults(), ...(raw ? JSON.parse(raw) : {}) }; }
+        try { const raw = localStorage.getItem(STORAGE_KEY); const merged = { ...defaults(), ...(raw ? JSON.parse(raw) : {}) }; if (!merged.bornAt) merged.bornAt = Date.now(); return merged; }
         catch (error) { console.warn(`${EXT_NAME} state load failed`, error); return defaults(); }
     }
     function saveState() { state.lastTick = Date.now(); try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {} }
@@ -118,29 +118,62 @@
     function buildPanel() {
         let host = document.getElementById('st-pixel-pet-root');
         if (!host) {
-            host = document.createElement('div'); host.id = 'st-pixel-pet-root';
-            host.innerHTML = `<div id="st-pixel-pet-panel" class="pixel-pet-panel" aria-hidden="true" role="dialog" aria-label="电子宠物小屋">
+            host = document.createElement('div');
+            host.id = 'st-pixel-pet-root';
+            host.innerHTML = `<div id="st-pixel-pet-panel" class="pixel-pet-panel" aria-hidden="true" role="dialog" aria-label="SillyPet 拓麻歌子电子宠物机">
                 <div class="pet-backdrop-close" data-action="close"></div>
                 <div class="pet-window" role="document">
-                    <div class="pet-shell-rivet r1"></div><div class="pet-shell-rivet r2"></div>
-                    <div class="pet-topbar"><div class="device-brand"><div class="device-logo">SILLY<span>PET</span></div><div class="device-subtitle">DANGO FRIEND • v${VERSION}</div></div><div class="device-status"><span class="device-heart">♥</span><span class="device-battery">▰▰▰</span><button class="pet-mini-btn" data-action="reset">↺</button><button class="pet-mini-btn" data-action="close">×</button></div></div>
-                    <div class="pet-main-grid"><section class="pet-stage"><div class="lcd-bezel"></div><div class="stage-grid"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="lcd-topline"><span>DAY 01</span><span class="lcd-sun">☀</span><span>08:15</span></div><div class="stage-caption"><span id="pet-status-dot"></span><span id="pet-status-text">${escapeHtml(petFace().label)}</span></div>
-                        <div class="play-fx-layer" aria-hidden="true"><div class="fx-hand">🖐</div><div class="fx-ball" role="button" aria-label="拖动皮球">⚪</div><div class="fx-dust d1"></div><div class="fx-dust d2"></div><div class="fx-note">♪</div><div class="fx-catch-text">拖住球，朝团子丢过去！</div></div>
-                        <div class="pet-art-wrap">${petArtHtml()}</div><div class="name-plate"><span class="name-dot"></span><span id="pet-name-label">${escapeHtml(state.name)}</span><button class="rename-btn" data-action="rename">✎</button></div><div class="lcd-baseline"><span>♡ DANGO FRIEND</span><span>PLAY TOGETHER</span></div>
-                    </section><aside class="pet-side">
-                        <div class="pet-card pet-selector-block"><div class="section-title"><span>小伙伴</span><span>FRIENDS</span></div><div class="pet-selector">${Object.values(PETS).map(p => `<button class="pet-choice ${state.petId===p.id?'active':''}" data-action="select-pet" data-id="${p.id}"><span class="mini-pet mini-${p.id}"></span><span>${p.name}</span><b>●</b></button>`).join('')}</div></div>
-                        <div class="pet-card stats-card"><div class="section-title"><span>状态条</span><span>STATUS</span></div><div class="stats-list">${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}</div></div>
-                        <div class="pet-card reaction-card"><div class="reaction-ribbon">TODAY</div><div id="pet-reaction">${escapeHtml(state.lastAction || '刚刚见面')}</div><small>陪它玩一玩，团子会做出对应动作。</small></div>
-                    </aside></div>
-                    <div class="pet-tabs" role="tablist"><button class="pet-tab active" data-tab="feed"><span>◉</span><strong>喂喂我</strong><small>FOOD</small></button><button class="pet-tab" data-tab="bath"><span>≈</span><strong>洗香香</strong><small>BATH</small></button><button class="pet-tab" data-tab="play"><span>♡</span><strong>和我玩</strong><small>PLAY</small></button></div>
-                    <div class="tab-content active" id="tab-feed"><div class="menu-hint">选一份小点心投喂 <span>· 每次都会有随机奖励</span></div><div class="action-grid">${FOODS.map(x=>actionCard(x,'feed')).join('')}</div><div class="tip-line">吃饱了会更有精神，饿肚子时会开始咕噜咕噜。</div></div>
-                    <div class="tab-content" id="tab-bath"><div class="menu-hint">选择清洁用品 <span>· 洗干净会恢复心情</span></div><div class="action-grid two">${TOOLS.map(x=>actionCard(x,'bath')).join('')}</div><div class="tip-line">变脏时会出现小污点和不开心的小动作。</div></div>
-                    <div class="tab-content" id="tab-play"><div class="menu-hint">选择一种互动 <span>· 每一种都会触发不同动作</span></div><div class="action-grid three">${PLAY_ACTIONS.map(x=>actionCard(x,'play')).join('')}</div><div class="tip-line">摸头：点击一下；打滚：直接点团子；顶球：拖住球丢给它接。</div></div>
-                    <div class="pet-footer"><span>♡ 今日照顾 <b id="care-count">${getCareCount()}</b> 次</span><span>LOCAL SAVE · DANGO MODE</span></div>
+                    <div class="device-top-screw screw-left"></div><div class="device-top-screw screw-right"></div>
+                    <div class="device-titlebar">
+                        <div class="brand-mark"><span class="brand-dot"></span><span class="brand-main">SILLY PET</span><span class="brand-mini">DIGITAL PAL</span></div>
+                        <div class="device-mini-status"><span class="led-dot"></span><span class="battery">BAT ▰▰▰</span><button class="pet-mini-btn" data-action="reset" aria-label="重置">↻</button><button class="pet-mini-btn" data-action="close" aria-label="关闭">×</button></div>
+                    </div>
+
+                    <section class="lcd-housing">
+                        <div class="lcd-screen">
+                            <div class="lcd-scanlines"></div>
+                            <div class="lcd-header"><span id="lcd-day">DAY 01</span><span id="lcd-clock">00:00</span></div>
+                            <div class="lcd-status-icons"><span class="lcd-icon" id="lcd-mood-icon">♥</span><span class="lcd-icon" id="lcd-clean-icon">✦</span><span class="lcd-icon" id="lcd-food-icon">◒</span><span class="lcd-mode" id="lcd-mode">IDLE</span></div>
+                            <div class="screen-stage">
+                                <div class="pixel-cloud cloud-a"></div><div class="pixel-cloud cloud-b"></div>
+                                <div class="grass-line"></div>
+                                <div class="play-fx-layer" aria-hidden="true"><div class="fx-hand">✋</div><div class="fx-ball" role="button" aria-label="拖动皮球">●</div><div class="fx-dust d1"></div><div class="fx-dust d2"></div><div class="fx-note">♪</div><div class="fx-catch-text">把球丢给团子！</div></div>
+                                <div class="pet-art-wrap">${petArtHtml()}</div>
+                            </div>
+                            <div class="lcd-footer"><span class="lcd-pet-name" id="pet-name-label">${escapeHtml(state.name)}</span><span class="lcd-message" id="pet-status-text">${escapeHtml(petFace().label)}</span></div>
+                        </div>
+                    </section>
+
+                    <div class="info-strip">
+                        <button class="pet-info-pill" data-action="rename"><span class="pill-icon">♥</span><span><b id="info-name">${escapeHtml(state.name)}</b><small>名字</small></span><span class="pill-edit">✎</span></button>
+                        <button class="pet-info-pill" data-action="select-pet"><span class="pill-icon">●</span><span><b id="info-species">${escapeHtml(PETS[state.petId]?.name || PETS.bunny.name)}</b><small>伙伴</small></span><span class="pill-edit">⌄</span></button>
+                        <div class="pet-info-pill stats-pill"><div class="mini-stat"><span>♥</span><strong id="mini-mood">${Math.round(state.mood)}</strong></div><div class="mini-stat"><span>✦</span><strong id="mini-clean">${Math.round(state.clean)}</strong></div><div class="mini-stat"><span>◒</span><strong id="mini-fullness">${Math.round(state.fullness)}</strong></div></div>
+                    </div>
+
+                    <div class="button-panel-title"><span>CARE MENU</span><span>按下按钮和它一起生活</span></div>
+                    <div class="pet-tabs" role="tablist">
+                        <button class="pet-tab active" data-tab="feed"><span class="hardware-letter">A</span><span class="tab-icon">◉</span><strong>喂食</strong><small>FOOD</small></button>
+                        <button class="pet-tab" data-tab="bath"><span class="hardware-letter">B</span><span class="tab-icon">≈</span><strong>洗澡</strong><small>BATH</small></button>
+                        <button class="pet-tab" data-tab="play"><span class="hardware-letter">C</span><span class="tab-icon">♡</span><strong>玩耍</strong><small>PLAY</small></button>
+                    </div>
+
+                    <div class="menu-tray">
+                        <div class="tab-content active" id="tab-feed"><div class="menu-hint"><b>FEED</b> 选择一份小食物</div><div class="action-grid">${FOODS.map(x=>actionCard(x,'feed')).join('')}</div></div>
+                        <div class="tab-content" id="tab-bath"><div class="menu-hint"><b>BATH</b> 让团子重新香香的</div><div class="action-grid two">${TOOLS.map(x=>actionCard(x,'bath')).join('')}</div></div>
+                        <div class="tab-content" id="tab-play"><div class="menu-hint"><b>PLAY</b> 选择一个互动</div><div class="action-grid three">${PLAY_ACTIONS.map(x=>actionCard(x,'play')).join('')}</div></div>
+                    </div>
+
+                    <div class="reaction-strip"><span class="reaction-dot"></span><span id="pet-reaction">${escapeHtml(state.lastAction || '刚刚见面')}</span><span class="care-count">CARE <b id="care-count">${getCareCount()}</b></span></div>
+                    <div class="hardware-buttons" aria-hidden="true"><span></span><span class="center"></span><span></span></div>
+                    <div class="pet-footer"><span>LOCAL SAVE</span><span>v${VERSION}</span><span>MADE FOR SILLYTAVERN</span></div>
                 </div></div>`;
-            document.body.appendChild(host); bindEvents(host);
+            document.body.appendChild(host);
+            bindEvents(host);
         }
-        ensureLauncher(); updatePanel();
+        ensureLauncher();
+        updatePanel();
+        updateClock();
+        ensureClockTicker();
     }
 
     function ensureLauncher() {
@@ -329,6 +362,24 @@
     function recordCare(){try{localStorage.setItem(CARE_KEY,String(getCareCount()+1));}catch(_) {}}
     function updatePanel(withAnim=false){const panel=document.getElementById('st-pixel-pet-panel');if(!panel)return;ensureFresh();const artWrap=panel.querySelector('.pet-art-wrap');if(artWrap)artWrap.innerHTML=petArtHtml();const nameLabel=panel.querySelector('#pet-name-label'),statusText=panel.querySelector('#pet-status-text'),reaction=panel.querySelector('#pet-reaction'),careCount=panel.querySelector('#care-count');if(nameLabel)nameLabel.textContent=state.name;if(statusText)statusText.textContent=petFace().label;if(reaction)reaction.textContent=state.lastAction||'刚刚见面';if(careCount)careCount.textContent=getCareCount();const dot=panel.querySelector('#pet-status-dot');if(dot)dot.classList.toggle('alert',needsFood()||needsBath()||needsComfort());const stats=panel.querySelector('.stats-card .stats-list');if(stats)stats.innerHTML=`${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}`;panel.querySelectorAll('.pet-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.id===state.petId));if(withAnim){const art=panel.querySelector('.pet-avatar');if(art){art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add('react-positive');}}}
     function playFx(type){const root=document.getElementById('st-pixel-pet-root'),art=root?.querySelector('.pet-avatar');if(!root||!art)return;root.classList.remove('fx-pat','fx-ball','fx-rope','fx-roll','fx-catch','fx-feed','fx-bath','fx-select');void root.offsetWidth;root.classList.add(`fx-${type}`);art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add(type==='ball'||type==='roll'?'react':'react-positive');setTimeout(()=>root.classList.remove(`fx-${type}`),type==='roll'?1000:900);}
+    let clockTimer = null;
+    function getAgeDays(){ return Math.max(1, Math.floor((Date.now() - (state.bornAt || Date.now())) / 86400000) + 1); }
+    function updateClock(){
+        const panel=document.getElementById('st-pixel-pet-panel');
+        if(!panel) return;
+        const now=new Date();
+        const hh=String(now.getHours()).padStart(2,'0'); const mm=String(now.getMinutes()).padStart(2,'0');
+        const clock=panel.querySelector('#lcd-clock'); if(clock) clock.textContent=`${hh}:${mm}`;
+        const day=panel.querySelector('#lcd-day'); if(day) day.textContent=`DAY ${String(getAgeDays()).padStart(2,'0')}`;
+        const mode=panel.querySelector('#lcd-mode'); if(mode) mode.textContent=(state.lastActionType||'idle').toUpperCase();
+        const miMood=panel.querySelector('#mini-mood'); if(miMood) miMood.textContent=Math.round(state.mood);
+        const miClean=panel.querySelector('#mini-clean'); if(miClean) miClean.textContent=Math.round(state.clean);
+        const miFull=panel.querySelector('#mini-fullness'); if(miFull) miFull.textContent=Math.round(state.fullness);
+        const moodIcon=panel.querySelector('#lcd-mood-icon'); if(moodIcon) moodIcon.textContent=state.mood<35?'♡':'♥';
+        const cleanIcon=panel.querySelector('#lcd-clean-icon'); if(cleanIcon) cleanIcon.textContent=state.clean<35?'!' :'✦';
+        const foodIcon=panel.querySelector('#lcd-food-icon'); if(foodIcon) foodIcon.textContent=state.fullness<35?'!' :'◒';
+    }
+    function ensureClockTicker(){ if(clockTimer) clearInterval(clockTimer); clockTimer=setInterval(updateClock,1000); }
     function startTicker(){if(ticker)clearInterval(ticker);ticker=setInterval(()=>{if(applyDecay())updatePanel(false);},30000);}
     function stopTicker(){if(ticker){clearInterval(ticker);ticker=null;}}
     function ensureHost(){if(!document.body)return false;buildPanel();ensureLauncher();return !!document.getElementById('st-pixel-pet-fab');}
@@ -336,7 +387,7 @@
 
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initInternal,{once:true});else initInternal();
     if(window.jQuery)window.jQuery(initInternal);
-    window.addEventListener('pagehide',()=>{saveState();stopTicker();});
+    window.addEventListener('pagehide',()=>{saveState();stopTicker();if(clockTimer){clearInterval(clockTimer);clockTimer=null;}});
     if(typeof MutationObserver!=='undefined'){let observeTimer=null;const observeBody=()=>{if(!document.body)return;const observer=new MutationObserver(()=>{if(observeTimer)return;observeTimer=setTimeout(()=>{observeTimer=null;if(!document.getElementById('st-pixel-pet-fab')||!document.getElementById('st-pixel-pet-root'))initInternal();},80);});observer.observe(document.body,{childList:true});};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observeBody,{once:true});else observeBody();}
     window.SillyPet=Object.freeze({version:VERSION,init:initInternal,open:()=>togglePanel(true),close:()=>togglePanel(false)});
 })();

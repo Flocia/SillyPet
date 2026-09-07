@@ -1,9 +1,8 @@
-# SillyPet · 团子电子宠物
+# SillyPet 2.5.0
 
-## v2.4.0
-- 更大的拓麻歌子风格可爱眼睛，团子身体比例更小。
-- 摸摸头恢复为点击互动，一次点击触发摸头反馈。
-- 删除跳绳。
-- “玩皮球”改为“打滚”：选择后点击宠物，团子开始翻滚。
-- 新增“顶球”：选择后拖住球，朝团子方向丢出，成功进入接球动画并奖励心情。
-- 保留安卓移动端悬浮猫爪、状态衰减、本地存档。
+A Tamagotchi-inspired pixel dango pet for SillyTavern.
+
+## Install
+Paste `https://github.com/Flocia/SillyPet` into SillyTavern → Extensions → Install Extension.
+
+The repository root must contain `manifest.json`, `index.js`, and `style.css`.
