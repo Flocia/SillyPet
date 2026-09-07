@@ -1,7 +1,6 @@
 # Changelog
 
-## 3.1.1
-- Fixed floating cat-paw launcher click/touch behavior on Android WebView.
-- Added pointerup/touchend fallback with duplicate-event suppression.
-- Kept launcher above the fullscreen host with explicit pointer-event rules.
-- Applied the requested Tamagotchi pixel CSS treatment without removing the existing SillyPet styles.
+## 3.2.0
+- 三种宠物全部改为 12px box-shadow 像素精灵
+- 按参考兔子重做大脸、大眼、小身体比例
+- 保留悬浮球与现有互动逻辑

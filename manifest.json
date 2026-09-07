@@ -1,5 +1,5 @@
 {
-  "display_name": "SillyPet · 电子宠物小屋",
+  "display_name": "SillyPet · 参考图像素宠物",
   "loading_order": 80,
   "requires": [],
   "optional": [],
@@ -7,7 +7,8 @@
   "js": "index.js",
   "css": "style.css",
   "author": "Flocia",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "homePage": "https://github.com/Flocia/SillyPet",
-  "auto_update": true
+  "auto_update": true,
+  "description": "三种 12px box-shadow 像素宠物，参考用户提供的像素兔风格"
 }
