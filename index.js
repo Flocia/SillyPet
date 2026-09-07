@@ -4,7 +4,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '2.9.0';
+    const VERSION = '3.0.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔团子', color: '#f7f7fb', shadow: '#c9cad5', eye: '#413b4d', blush: '#f0a4ad' },
@@ -28,7 +28,7 @@
 
     const PLAY_ACTIONS = [
         { id: 'pat', name: '摸摸头', icon: '🖐', desc: '点一下，轻轻摸摸', mood: [6, 13], clean: [0, 1], fullness: [0, 0] },
-        { id: 'roll', name: '打滚', icon: '↻', desc: '点团子就开始翻滚', mood: [7, 14], clean: [-2, 0], fullness: [-1, 0] },
+        { id: 'bounce', name: '弹跳', icon: '↕', desc: '点击团子就开始上下弹跳', mood: [7, 14], clean: [-1, 0], fullness: [-1, 0] },
         { id: 'catch', name: '顶球', icon: '●', desc: '把球拖出去让它接住', mood: [10, 20], clean: [-2, 0], fullness: [-1, 0] },
     ];
 
@@ -42,7 +42,7 @@
         play: {
             pat: ['呼噜呼噜……好舒服。', '耳朵软乎乎地抖了一下。', '团子往你的手心蹭了蹭。'],
             ball: ['接到啦！', '团子一路滚过去追球。', '皮球咕噜噜地跑起来！'],
-            roll: ['咕噜咕噜！团子滚起来啦！', '圆滚滚地翻了一圈～', '停下来时还在摇摇晃晃。'],
+            bounce: ['跳得高高的！', '团子一蹦一蹦好开心～', '弹回来啦！再跳一次！'],
             catch: ['接到啦！', '团子顶住球啦！', '球球稳稳地落进怀里。'],
         },
     };
@@ -237,7 +237,7 @@
                             <div class="screen-stage">
                                 <div class="pixel-cloud cloud-a"></div><div class="pixel-cloud cloud-b"></div>
                                 <div class="grass-line"></div>
-                                <div class="play-fx-layer" aria-hidden="true"><div class="fx-hand">✋</div><div class="fx-ball" role="button" aria-label="拖动皮球">●</div><div class="fx-dust d1"></div><div class="fx-dust d2"></div><div class="fx-note">♪</div><div class="fx-catch-text">把球丢给团子！</div></div>
+                                <div class="play-fx-layer" aria-hidden="true"><div class="fx-hand">✋</div><div class="fx-ball" role="button" aria-label="拖动皮球">●</div><div class="fx-dust d1"></div><div class="fx-dust d2"></div><div class="fx-note">♪</div><div class="fx-catch-text">把球丢给团子！</div><div class="bath-fx soap-fx"><span class="soap-bar">▰</span><i></i><i></i><i></i></div><div class="bath-fx shower-fx"><span class="shower-head">╭─</span><span class="water-drop d1">•</span><span class="water-drop d2">•</span><span class="water-drop d3">•</span><span class="water-drop d4">•</span></div></div>
                                 <div class="pet-art-wrap">${petArtHtml()}</div>
                             </div>
                             <div class="lcd-footer"><span class="lcd-pet-name" id="pet-name-label">${escapeHtml(state.name)}</span><span class="lcd-message" id="pet-status-text">${escapeHtml(petFace().label)}</span></div>
@@ -286,7 +286,20 @@
         fab = document.createElement('button'); fab.id='st-pixel-pet-fab'; fab.type='button'; fab.className='pixel-pet-fab'; fab.setAttribute('aria-label','打开电子宠物'); fab.setAttribute('aria-expanded','false'); fab.title='打开电子宠物';
         fab.innerHTML='<span class="paw-pad"></span><span class="paw-toe t1"></span><span class="paw-toe t2"></span><span class="paw-toe t3"></span><span class="paw-toe t4"></span>';
         Object.assign(fab.style,{position:'fixed',right:'16px',bottom:'16px',left:'auto',top:'auto',width:'58px',height:'58px',display:'block',visibility:'visible',opacity:'1',pointerEvents:'auto',zIndex:'2147483647',margin:'0',padding:'0',border:'0'});
-        document.body.appendChild(fab); fab.addEventListener('click',()=>togglePanel());
+        document.body.appendChild(fab);
+        // Robust launcher input: click + pointerup fallback for Android WebView/touch.
+        let lastOpenAt=0;
+        const openFromLauncher=(event)=>{
+            event.preventDefault();
+            event.stopPropagation();
+            const now=Date.now();
+            if(now-lastOpenAt<180)return;
+            lastOpenAt=now;
+            togglePanel();
+        };
+        fab.addEventListener('click',openFromLauncher,{passive:false});
+        fab.addEventListener('pointerup',openFromLauncher,{passive:false});
+        fab.addEventListener('touchend',openFromLauncher,{passive:false});
         let drag=null;
         fab.addEventListener('pointerdown',event=>{ if(event.button!==undefined&&event.button!==0)return; const r=fab.getBoundingClientRect(); drag={pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,originX:r.left,originY:r.top,moved:false}; fab.setPointerCapture?.(event.pointerId); });
         fab.addEventListener('pointermove',event=>{ if(!drag||event.pointerId!==drag.pointerId)return; const dx=event.clientX-drag.startX,dy=event.clientY-drag.startY; if(!drag.moved&&Math.hypot(dx,dy)<6)return; drag.moved=true; const w=58,h=58; fab.style.left=`${Math.min(Math.max(8,drag.originX+dx),Math.max(8,innerWidth-w-8))}px`; fab.style.top=`${Math.min(Math.max(8,drag.originY+dy),Math.max(8,innerHeight-h-8))}px`; fab.style.right='auto'; fab.style.bottom='auto'; event.preventDefault(); });
@@ -313,9 +326,9 @@
         });
         const artWrap=host.querySelector('.pet-art-wrap');
         artWrap?.addEventListener('click',event=>{
-            if(host.classList.contains('pet-roll-ready')){
+            if(host.classList.contains('pet-bounce-ready')){
                 event.preventDefault();
-                doPetRoll();
+                doPetBounce();
             }
         });
         setupCatchBall(host);
@@ -326,20 +339,33 @@
     function ensureFresh(){applyDecay();}
     function selectPet(id){if(!PETS[id])return;ensureFresh();state.petId=id;state.mood=clamp(state.mood+rand(2,6));state.lastAction=`遇见了 ${PETS[id].name}！`;state.lastActionType='pet';saveState();recordCare();updatePanel(true);playFx('select');}
     function doFeed(id){ensureFresh();const food=FOODS.find(x=>x.id===id);if(!food)return;const amount=rand(food.gain[0],food.gain[1]),moodGain=rand(4,9);state.fullness=clamp(state.fullness+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.feed[state.petId])} 饱肚 +${amount} / 心情 +${moodGain}`;state.lastActionType='feed';saveState();recordCare();updatePanel(true);playFx('feed');}
-    function doBath(id){ensureFresh();const tool=TOOLS.find(x=>x.id===id);if(!tool)return;const amount=rand(tool.gain[0],tool.gain[1]),moodGain=rand(5,11);state.clean=clamp(state.clean+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.bath)} 清洁 +${amount} / 心情 +${moodGain}`;state.lastActionType='bath';saveState();recordCare();updatePanel(true);playFx('bath');}
-    function doPetRoll(){
+    function doBath(id){ensureFresh();const tool=TOOLS.find(x=>x.id===id);if(!tool)return;const amount=rand(tool.gain[0],tool.gain[1]),moodGain=rand(5,11);state.clean=clamp(state.clean+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.bath)} 清洁 +${amount} / 心情 +${moodGain}`;state.lastActionType='bath';saveState();recordCare();updatePanel(true);playBathFx(id);}
+    function playBathFx(toolId){
+        const root=document.getElementById('st-pixel-pet-root');
+        const art=root?.querySelector('.pet-avatar');
+        if(!root||!art)return;
+        root.classList.remove('fx-bath-soap','fx-bath-shower','fx-bath');
+        void root.offsetWidth;
+        root.classList.add(toolId==='soap'?'fx-bath-soap':'fx-bath-shower');
+        art.classList.remove('react','react-positive');
+        void art.offsetWidth;
+        art.classList.add('react-positive');
+        setTimeout(()=>root.classList.remove(toolId==='soap'?'fx-bath-soap':'fx-bath-shower'),1400);
+    }
+
+    function doPetBounce(){
         const host=document.getElementById('st-pixel-pet-root');
-        if(!host || !host.classList.contains('pet-roll-ready'))return;
+        if(!host || !host.classList.contains('pet-bounce-ready'))return;
         ensureFresh();
         const moodGain=rand(7,14);
         state.mood=clamp(state.mood+moodGain);
-        state.clean=clamp(state.clean-rand(0,2));
+        state.clean=clamp(state.clean-rand(0,1));
         state.fullness=clamp(state.fullness-rand(0,1));
-        state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play.roll)} 心情 +${moodGain}`;
-        state.lastActionType='roll';
+        state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play.bounce)} 心情 +${moodGain}`;
+        state.lastActionType='bounce';
         saveState();recordCare();
-        host.classList.remove('pet-roll-ready');
-        playFx('roll');
+        host.classList.remove('pet-bounce-ready');
+        playFx('bounce');
         updatePanel(false);
     }
 
@@ -347,7 +373,7 @@
         const host=document.getElementById('st-pixel-pet-root');
         const ball=host?.querySelector('.fx-ball');
         if(!host||!ball)return;
-        host.classList.remove('fx-roll','fx-catch');
+        host.classList.remove('fx-bounce','fx-catch');
         host.classList.add('catch-mode');
         ball.style.left='14%';
         ball.style.top='62%';
@@ -355,48 +381,94 @@
         ball.style.transition='none';
         ball.style.opacity='1';
         const text=host.querySelector('.fx-catch-text');
-        if(text)text.textContent='拖住球，朝团子丢过去！';
+        if(text)text.textContent='按住皮球拖动，松开就会顺着方向扔出去！';
     }
 
     function setupCatchBall(host){
         const ball=host.querySelector('.fx-ball');
-        const stage=host.querySelector('.pet-stage');
+        const stage=host.querySelector('.screen-stage');
         if(!ball||!stage)return;
         let drag=null;
         ball.addEventListener('pointerdown',event=>{
             if(!host.classList.contains('catch-mode'))return;
             event.preventDefault();
             ball.setPointerCapture?.(event.pointerId);
-            drag={pointerId:event.pointerId};
+            const rect=stage.getBoundingClientRect();
+            const x=event.clientX-rect.left; const y=event.clientY-rect.top;
+            drag={pointerId:event.pointerId,startX:x,startY:y,lastX:x,lastY:y,lastTime:performance.now(),vx:0,vy:0};
+            ball.classList.add('is-held');
         });
         ball.addEventListener('pointermove',event=>{
             if(!drag||event.pointerId!==drag.pointerId)return;
             const rect=stage.getBoundingClientRect();
-            const x=Math.max(16,Math.min(rect.width-16,event.clientX-rect.left));
+            const x=Math.max(18,Math.min(rect.width-18,event.clientX-rect.left));
             const y=Math.max(18,Math.min(rect.height-18,event.clientY-rect.top));
+            const now=performance.now(); const dt=Math.max(16,now-drag.lastTime);
+            const instantVx=(x-drag.lastX)/dt; const instantVy=(y-drag.lastY)/dt;
+            drag.vx=drag.vx*0.55+instantVx*0.45; drag.vy=drag.vy*0.55+instantVy*0.45;
+            drag.lastX=x; drag.lastY=y; drag.lastTime=now;
             ball.style.left=`${x}px`;
             ball.style.top=`${y}px`;
         });
-        ball.addEventListener('pointerup',event=>{
+        const release=event=>{
             if(!drag||event.pointerId!==drag.pointerId)return;
-            drag=null;
+            event.preventDefault();
+            const d=drag; drag=null; ball.classList.remove('is-held');
             const rect=stage.getBoundingClientRect();
-            const x=event.clientX-rect.left, y=event.clientY-rect.top;
-            const ok=x>rect.width*0.44 && x<rect.width*0.92 && y>rect.height*0.18 && y<rect.height*0.82;
-            if(!ok){
-                ball.animate([{transform:'translate(-50%,-50%) scale(1)'},{transform:'translate(-50%,-50%) scale(.78)'},{transform:'translate(-50%,-50%) scale(1)'}],{duration:280,iterations:1});
-                return;
+            const x=d.lastX, y=d.lastY;
+            let vx=d.vx*1000, vy=d.vy*1000;
+            const speed=Math.hypot(vx,vy);
+            if(speed<90){ vx=120; vy=-70; }
+            const len=Math.hypot(vx,vy)||1;
+            const nx=vx/len, ny=vy/len;
+            const pet=document.querySelector('.pet-avatar');
+            let caught=false;
+            if(pet){
+                const pr=pet.getBoundingClientRect();
+                const pcx=pr.left+pr.width/2-rect.left; const pcy=pr.top+pr.height*0.55-rect.top;
+                const tx=pcx-x, ty=pcy-y;
+                const proj=tx*nx+ty*ny;
+                const closestX=x+Math.max(0,proj)*nx, closestY=y+Math.max(0,proj)*ny;
+                const dist=Math.hypot(pcx-closestX,pcy-closestY);
+                const reach=Math.min(180,Math.max(120, pet.clientWidth*.62));
+                caught=proj>30 && proj<Math.max(rect.width,rect.height)*1.4 && dist<reach;
+                if(caught){
+                    const targetX=pcx, targetY=Math.max(26,pcy-8);
+                    throwBall(ball,x,y,targetX,targetY,360,()=>finishCatchGame(host,ball));
+                    const text=host.querySelector('.fx-catch-text'); if(text)text.textContent='接球！';
+                    return;
+                }
             }
-            host.classList.add('fx-catch');
-            ball.style.transition='left .55s steps(7,end), top .55s steps(7,end), transform .55s steps(7,end)';
-            ball.style.left='52%';
-            ball.style.top='46%';
-            ball.style.transform='translate(-50%,-50%) scale(.78)';
-            const text=host.querySelector('.fx-catch-text');
-            if(text)text.textContent='接住啦！';
-            setTimeout(()=>finishCatchGame(host,ball),560);
-        });
-        ball.addEventListener('pointercancel',()=>{drag=null;});
+            const distToEdge=Math.max(rect.width,rect.height)*1.1;
+            const endX=Math.max(-70,Math.min(rect.width+70,x+nx*distToEdge));
+            const endY=Math.max(-70,Math.min(rect.height+70,y+ny*distToEdge));
+            const text=host.querySelector('.fx-catch-text'); if(text)text.textContent='再接近一点试试！';
+            throwBall(ball,x,y,endX,endY,420,()=>{
+                ball.style.opacity='0';
+                setTimeout(()=>{ if(host.classList.contains('catch-mode'))startCatchGame(); },180);
+            });
+        };
+        ball.addEventListener('pointerup',release);
+        ball.addEventListener('pointercancel',()=>{ if(drag){drag=null; ball.classList.remove('is-held'); startCatchGame();} });
+    }
+
+    function throwBall(ball,x0,y0,x1,y1,duration,onDone){
+        const start=performance.now();
+        ball.style.transition='none';
+        ball.style.opacity='1';
+        const arc=Math.min(70,Math.max(18,Math.hypot(x1-x0,y1-y0)*0.12));
+        function frame(now){
+            const t=Math.min(1,(now-start)/duration);
+            const e=1-Math.pow(1-t,3);
+            const x=x0+(x1-x0)*e;
+            const baseY=y0+(y1-y0)*e;
+            const y=baseY-Math.sin(Math.PI*e)*arc;
+            const scale=1+Math.sin(Math.PI*e)*0.12;
+            ball.style.left=`${x}px`; ball.style.top=`${y}px`;
+            ball.style.transform=`translate(-50%,-50%) scale(${scale}) rotate(${e*360}deg)`;
+            if(t<1)requestAnimationFrame(frame); else if(onDone)onDone();
+        }
+        requestAnimationFrame(frame);
     }
 
     function finishCatchGame(host,ball){
@@ -408,6 +480,7 @@
         state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play.catch)} 心情 +${moodGain}`;
         state.lastActionType='catch';
         saveState();recordCare();
+        host.classList.add('fx-catch');
         const art=host.querySelector('.pet-avatar');
         if(art){art.classList.remove('react-positive');void art.offsetWidth;art.classList.add('react-positive');}
         const reaction=host.querySelector('#pet-reaction');
@@ -418,15 +491,15 @@
         setTimeout(()=>{
             host.classList.remove('catch-mode','fx-catch');
             ball.style.opacity='0';
-        },650);
+        },700);
     }
 
     function stopCatchGame(){
         const host=document.getElementById('st-pixel-pet-root');
         if(!host)return;
-        host.classList.remove('catch-mode','fx-catch','pet-roll-ready');
+        host.classList.remove('catch-mode','fx-catch','pet-bounce-ready','fx-bounce','fx-bath-soap','fx-bath-shower');
         const ball=host.querySelector('.fx-ball');
-        if(ball)ball.style.opacity='0';
+        if(ball){ball.style.opacity='0';ball.classList.remove('is-held');}
     }
 
     function doPlay(id){
@@ -443,19 +516,19 @@
             saveState();recordCare();updatePanel(true);playFx('pat');
             return;
         }
-        if(id==='roll'){
-            host.classList.add('pet-roll-ready');
+        if(id==='bounce'){
+            host.classList.add('pet-bounce-ready');
             const reaction=host.querySelector('#pet-reaction');
             const status=host.querySelector('#pet-status-text');
-            if(reaction)reaction.textContent='现在点一下团子，它就会开始打滚！';
-            if(status)status.textContent='点团子开始打滚';
+            if(reaction)reaction.textContent='现在点击团子，它会开心地上下弹跳！';
+            if(status)status.textContent='点团子开始弹跳';
             return;
         }
         if(id==='catch'){
             startCatchGame();
             const reaction=host.querySelector('#pet-reaction');
             const status=host.querySelector('#pet-status-text');
-            if(reaction)reaction.textContent='把球拖出去，丢给团子接住！';
+            if(reaction)reaction.textContent='按住皮球拖动，松开顺着方向扔给团子！';
             if(status)status.textContent='准备接球';
         }
     }
@@ -465,7 +538,7 @@
     function getCareCount(){const value=Number(localStorage.getItem(CARE_KEY)||0);return Number.isFinite(value)?value:0;}
     function recordCare(){try{localStorage.setItem(CARE_KEY,String(getCareCount()+1));}catch(_) {}}
     function updatePanel(withAnim=false){const panel=document.getElementById('st-pixel-pet-panel');if(!panel)return;ensureFresh();const artWrap=panel.querySelector('.pet-art-wrap');if(artWrap)artWrap.innerHTML=petArtHtml();const nameLabel=panel.querySelector('#pet-name-label'),statusText=panel.querySelector('#pet-status-text'),reaction=panel.querySelector('#pet-reaction'),careCount=panel.querySelector('#care-count'),infoName=panel.querySelector('#info-name'),infoSpecies=panel.querySelector('#info-species');if(nameLabel)nameLabel.textContent=state.name;if(infoName)infoName.textContent=state.name;if(infoSpecies)infoSpecies.textContent=PETS[state.petId]?.name||PETS.bunny.name;if(statusText)statusText.textContent=petFace().label;if(reaction)reaction.textContent=state.lastAction||'刚刚见面';if(careCount)careCount.textContent=getCareCount();const dot=panel.querySelector('#pet-status-dot');if(dot)dot.classList.toggle('alert',needsFood()||needsBath()||needsComfort());const stats=panel.querySelector('.stats-card .stats-list');if(stats)stats.innerHTML=`${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}`;panel.querySelectorAll('.pet-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.id===state.petId));if(withAnim){const art=panel.querySelector('.pet-avatar');if(art){art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add('react-positive');}}}
-    function playFx(type){const root=document.getElementById('st-pixel-pet-root'),art=root?.querySelector('.pet-avatar');if(!root||!art)return;root.classList.remove('fx-pat','fx-ball','fx-rope','fx-roll','fx-catch','fx-feed','fx-bath','fx-select');void root.offsetWidth;root.classList.add(`fx-${type}`);art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add(type==='ball'||type==='roll'?'react':'react-positive');setTimeout(()=>root.classList.remove(`fx-${type}`),type==='roll'?1000:900);}
+    function playFx(type){const root=document.getElementById('st-pixel-pet-root'),art=root?.querySelector('.pet-avatar');if(!root||!art)return;root.classList.remove('fx-pat','fx-ball','fx-rope','fx-bounce','fx-roll','fx-catch','fx-feed','fx-bath','fx-select','fx-bath-soap','fx-bath-shower');void root.offsetWidth;root.classList.add(`fx-${type}`);art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add(type==='bounce'?'react':'react-positive');setTimeout(()=>root.classList.remove(`fx-${type}`),type==='bounce'?1500:900);}
     let clockTimer = null;
     function getAgeDays(){ return Math.max(1, Math.floor((Date.now() - (state.bornAt || Date.now())) / 86400000) + 1); }
     function updateClock(){
