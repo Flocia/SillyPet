@@ -89,38 +89,102 @@
         return { eyes: '● ●', mouth: '﹏', label: '有点无聊了' };
     }
 
-    function speciesHtml(pet) {
+    // Cute pixel creature artwork inspired by the user's reference image:
+    // oversized sparkling eyes, compact lower body, bold pixel outline, tiny facial features.
+    function petSvgHtml(pet) {
+        const common = `shape-rendering="crispEdges" viewBox="0 0 160 190" role="img" aria-label="${escapeHtml(pet.name)}"`;
+        const outline = '#2f2940';
+        const white = '#fff8f4';
         if (pet.id === 'bunny') {
-            return '<div class="pixel-ear e1 bunny-ear"><span></span></div><div class="pixel-ear e2 bunny-ear"><span></span></div><div class="pixel-tail bunny-tail"></div>';
+            return `<svg class="pet-sprite pet-sprite-bunny" ${common}>
+                <g>
+                    <polygon fill="${outline}" points="39,55 29,45 29,17 38,8 47,10 53,31 63,28 70,10 79,7 88,12 89,44 79,55 73,48 49,48"/>
+                    <polygon fill="#f8e4eb" points="36,43 34,19 39,14 43,17 48,40 46,47"/>
+                    <polygon fill="#f8e4eb" points="73,43 77,18 82,14 85,18 84,43 78,48"/>
+                    <polygon fill="${outline}" points="30,72 38,58 52,49 79,49 95,58 105,73 107,97 101,116 90,129 75,135 51,133 36,124 27,109 24,90"/>
+                    <polygon fill="#f7f6f8" points="35,72 43,60 54,55 77,55 91,62 100,75 102,94 96,109 86,121 73,126 53,124 41,117 33,104 30,89"/>
+                    <polygon fill="#ffffff" points="44,63 56,58 74,58 84,62 77,68 53,68" opacity=".6"/>
+                    <rect x="43" y="78" width="21" height="24" fill="#403557"/>
+                    <rect x="96" y="78" width="21" height="24" fill="#403557"/>
+                    <rect x="47" y="80" width="8" height="8" fill="#ffffff"/>
+                    <rect x="100" y="80" width="8" height="8" fill="#ffffff"/>
+                    <rect x="54" y="92" width="4" height="4" fill="#c7d4ff"/>
+                    <rect x="107" y="92" width="4" height="4" fill="#c7d4ff"/>
+                    <rect x="35" y="101" width="12" height="6" fill="#ef9bb2" opacity=".9"/>
+                    <rect x="113" y="101" width="12" height="6" fill="#ef9bb2" opacity=".9"/>
+                    <rect x="72" y="101" width="6" height="5" fill="#42334a"/>
+                    <rect x="66" y="106" width="18" height="5" fill="#42334a"/>
+                    <rect x="72" y="111" width="6" height="3" fill="#42334a"/>
+                    <polygon fill="${outline}" points="53,125 69,130 88,126 97,134 92,157 83,169 70,174 52,171 41,160 39,140"/>
+                    <polygon fill="#ececf3" points="57,128 71,133 84,130 91,136 87,153 80,162 69,166 55,163 47,155 46,141"/>
+                    <polygon fill="#f1a6b8" points="38,140 45,135 49,145 45,154 39,151"/>
+                    <polygon fill="#f1a6b8" points="91,137 98,141 95,152 89,154 87,145"/>
+                    <polygon fill="${outline}" points="96,126 112,124 125,130 126,144 118,151 108,147 101,140"/>
+                    <polygon fill="#f7f6f8" points="104,130 114,129 121,134 120,142 114,145 108,141"/>
+                    <rect x="29" y="157" width="24" height="7" fill="#c8c8d4" opacity=".7"/>
+                </g>
+            </svg>`;
         }
         if (pet.id === 'cat') {
-            return '<div class="pixel-ear e1 cat-ear"><span></span></div><div class="pixel-ear e2 cat-ear"><span></span></div><div class="pixel-tail cat-tail"></div>';
+            return `<svg class="pet-sprite pet-sprite-cat" ${common}>
+                <g>
+                    <polygon fill="${outline}" points="31,52 31,23 39,13 55,28 71,21 88,13 104,22 107,52 98,60 43,60"/>
+                    <polygon fill="#302e38" points="38,47 38,26 42,21 54,33 68,27 89,19 99,25 100,47 91,55 47,55"/>
+                    <polygon fill="${outline}" points="27,69 38,57 51,50 78,49 96,56 108,69 111,93 106,113 96,127 83,135 55,134 40,126 29,113 24,94"/>
+                    <polygon fill="#3b3a43" points="33,71 43,61 53,56 76,55 91,61 101,72 104,91 100,107 91,118 79,126 58,127 45,120 36,109 31,94"/>
+                    <polygon fill="#514f59" points="45,61 56,57 72,57 82,62 75,68 54,68" opacity=".65"/>
+                    <rect x="41" y="78" width="22" height="24" fill="#f4d47a"/>
+                    <rect x="84" y="78" width="22" height="24" fill="#f4d47a"/>
+                    <rect x="45" y="79" width="7" height="8" fill="#fffdf1"/>
+                    <rect x="88" y="79" width="7" height="8" fill="#fffdf1"/>
+                    <rect x="56" y="89" width="4" height="8" fill="#292530"/>
+                    <rect x="99" y="89" width="4" height="8" fill="#292530"/>
+                    <rect x="35" y="102" width="12" height="6" fill="#a96570"/>
+                    <rect x="109" y="102" width="12" height="6" fill="#a96570"/>
+                    <rect x="71" y="103" width="7" height="5" fill="#f2bcc8"/>
+                    <rect x="65" y="108" width="19" height="5" fill="#f2bcc8"/>
+                    <rect x="72" y="113" width="6" height="3" fill="#f2bcc8"/>
+                    <polygon fill="${outline}" points="56,126 70,131 87,127 97,136 92,158 83,171 67,175 52,171 42,160 40,141"/>
+                    <polygon fill="#46454f" points="59,129 70,134 83,131 90,138 86,154 78,164 67,167 55,163 48,154 47,142"/>
+                    <polygon fill="#6f626d" points="102,126 116,121 128,126 131,137 124,143 112,140 106,135"/>
+                    <polygon fill="#6b5963" points="107,128 116,125 123,129 125,136 118,138 111,135"/>
+                </g>
+            </svg>`;
         }
-        return '<div class="pixel-ear e1 dog-ear"><span></span></div><div class="pixel-ear e2 dog-ear"><span></span></div><div class="pixel-tail dog-tail"></div>';
+        return `<svg class="pet-sprite pet-sprite-dog" ${common}>
+            <g>
+                <polygon fill="${outline}" points="31,58 28,38 31,24 43,16 58,29 74,23 92,16 106,23 111,39 107,60 98,67 42,67"/>
+                <polygon fill="#6f7681" points="37,55 35,39 38,29 44,24 56,36 70,31 88,24 100,29 105,40 103,56 95,61 45,61"/>
+                <polygon fill="${outline}" points="31,74 40,62 54,54 81,54 98,61 111,75 113,98 108,116 98,130 85,137 57,135 42,129 30,116 25,98"/>
+                <polygon fill="#949aa4" points="37,76 45,67 56,60 78,60 91,66 102,77 106,95 101,110 92,120 81,127 59,126 47,121 38,111 32,97"/>
+                <polygon fill="#b8bdc5" points="47,67 57,62 74,62 84,67 78,73 55,73" opacity=".75"/>
+                <rect x="42" y="80" width="21" height="23" fill="#333b48"/>
+                <rect x="86" y="80" width="21" height="23" fill="#333b48"/>
+                <rect x="46" y="81" width="8" height="8" fill="#ffffff"/>
+                <rect x="90" y="81" width="8" height="8" fill="#ffffff"/>
+                <rect x="38" y="103" width="12" height="6" fill="#d4939d"/>
+                <rect x="111" y="103" width="12" height="6" fill="#d4939d"/>
+                <rect x="68" y="99" width="24" height="21" fill="#d7d9dd"/>
+                <rect x="74" y="97" width="12" height="11" fill="#2e3440"/>
+                <rect x="71" y="108" width="18" height="5" fill="#2e3440"/>
+                <rect x="77" y="113" width="6" height="3" fill="#2e3440"/>
+                <polygon fill="${outline}" points="54,128 70,132 87,127 98,136 93,158 85,170 69,175 54,171 43,161 41,141"/>
+                <polygon fill="#8b919b" points="59,130 70,135 83,131 91,138 87,153 79,163 69,167 57,163 49,155 48,142"/>
+                <polygon fill="${outline}" points="33,118 25,123 22,136 30,142 42,136 43,126"/>
+                <polygon fill="#8f96a0" points="31,123 27,127 26,134 31,137 38,133 39,128"/>
+            </g>
+        </svg>`;
     }
 
     function petArtHtml() {
         const pet = PETS[state.petId] || PETS.bunny;
-        const face = petFace();
         const classes = ['pet-avatar', `pet-${pet.id}`, `mood-${petMoodBand()}`, needsFood() ? 'state-hungry' : '', needsBath() ? 'state-dirty' : '', needsComfort() ? 'state-sad' : ''].filter(Boolean).join(' ');
-        return `<div class="${classes}" style="--pet-main:${pet.color};--pet-shadow:${pet.shadow};--pet-eye:${pet.eye};--pet-blush:${pet.blush};">
-            <div class="pixel-spark s1"></div><div class="pixel-spark s2"></div><div class="pixel-spark s3"></div>
-            <div class="pet-shadow"></div>
-            <div class="pixel-creature">
-                ${speciesHtml(pet)}
-                <div class="pixel-body">
-                    <div class="pixel-body-shine"></div>
-                    <div class="pixel-belly"></div>
-                    <div class="pixel-face">
-                        <div class="pixel-eye eye-left"><i></i></div>
-                        <div class="pixel-eye eye-right"><i></i></div>
-                        <div class="pixel-blush blush-left"></div><div class="pixel-blush blush-right"></div>
-                        <div class="pixel-mouth"><i></i><i></i><i></i></div>
-                    </div>
-                    <div class="pixel-mark"></div>
-                </div>
-            </div>
-            <div class="dirty-bubbles"><i></i><i></i><i></i></div><div class="tear-drop t1"></div><div class="tear-drop t2"></div><div class="heart-pop">♥</div><div class="hunger-pop">zzz…</div>
+        return `<div class="${classes}">
+            ${petSvgHtml(pet)}
+            <div class="pixel-pet-glow"></div>
+            <div class="pixel-dirty-grid"><i></i><i></i><i></i></div>
+            <div class="tear-drop t1"></div><div class="tear-drop t2"></div>
+            <div class="heart-pop">♥</div><div class="hunger-pop">zzz…</div>
         </div>`;
     }
 
