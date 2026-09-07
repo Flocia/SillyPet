@@ -4,7 +4,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '2.5.0';
+    const VERSION = '2.6.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔团子', color: '#f7f7fb', shadow: '#c9cad5', eye: '#413b4d', blush: '#f0a4ad' },
@@ -90,9 +90,13 @@
     }
 
     function speciesHtml(pet) {
-        if (pet.id === 'bunny') return '<div class="dango-ear e1 bunny-ear"></div><div class="dango-ear e2 bunny-ear"></div>';
-        if (pet.id === 'cat') return '<div class="dango-ear e1 cat-ear"></div><div class="dango-ear e2 cat-ear"></div>';
-        return '<div class="dango-ear e1 dog-ear"></div><div class="dango-ear e2 dog-ear"></div>';
+        if (pet.id === 'bunny') {
+            return '<div class="pixel-ear e1 bunny-ear"><span></span></div><div class="pixel-ear e2 bunny-ear"><span></span></div><div class="pixel-tail bunny-tail"></div>';
+        }
+        if (pet.id === 'cat') {
+            return '<div class="pixel-ear e1 cat-ear"><span></span></div><div class="pixel-ear e2 cat-ear"><span></span></div><div class="pixel-tail cat-tail"></div>';
+        }
+        return '<div class="pixel-ear e1 dog-ear"><span></span></div><div class="pixel-ear e2 dog-ear"><span></span></div><div class="pixel-tail dog-tail"></div>';
     }
 
     function petArtHtml() {
@@ -101,8 +105,21 @@
         const classes = ['pet-avatar', `pet-${pet.id}`, `mood-${petMoodBand()}`, needsFood() ? 'state-hungry' : '', needsBath() ? 'state-dirty' : '', needsComfort() ? 'state-sad' : ''].filter(Boolean).join(' ');
         return `<div class="${classes}" style="--pet-main:${pet.color};--pet-shadow:${pet.shadow};--pet-eye:${pet.eye};--pet-blush:${pet.blush};">
             <div class="pixel-spark s1"></div><div class="pixel-spark s2"></div><div class="pixel-spark s3"></div>
-            <div class="pet-shadow"></div><div class="tail"></div>${speciesHtml(pet)}
-            <div class="dango-ball"><div class="shine"></div><div class="belly-glow"></div><div class="face-eyes">${face.eyes}</div><div class="face-mouth">${face.mouth}</div><div class="blush b1"></div><div class="blush b2"></div></div>
+            <div class="pet-shadow"></div>
+            <div class="pixel-creature">
+                ${speciesHtml(pet)}
+                <div class="pixel-body">
+                    <div class="pixel-body-shine"></div>
+                    <div class="pixel-belly"></div>
+                    <div class="pixel-face">
+                        <div class="pixel-eye eye-left"><i></i></div>
+                        <div class="pixel-eye eye-right"><i></i></div>
+                        <div class="pixel-blush blush-left"></div><div class="pixel-blush blush-right"></div>
+                        <div class="pixel-mouth"><i></i><i></i><i></i></div>
+                    </div>
+                    <div class="pixel-mark"></div>
+                </div>
+            </div>
             <div class="dirty-bubbles"><i></i><i></i><i></i></div><div class="tear-drop t1"></div><div class="tear-drop t2"></div><div class="heart-pop">♥</div><div class="hunger-pop">zzz…</div>
         </div>`;
     }

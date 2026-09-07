@@ -600,3 +600,45 @@
 @media (max-width:470px){
   .pet-window{width:98vw!important;padding:9px!important;border-radius:27px!important}.lcd-screen{min-height:365px}.lcd-header{font-size:9px}.lcd-status-icons{font-size:10px}.lcd-mode{font-size:7px}.pet-art-wrap{transform:translateX(-50%) scale(.8)}.lcd-pet-name{font-size:10px}.lcd-message{font-size:7px}.info-strip{grid-template-columns:1fr 1fr}.stats-pill{grid-column:1 / -1}.pet-tab{min-height:61px!important}.pet-tab strong{font-size:9px}.tab-icon{font-size:15px}.action-grid,.action-grid.three{grid-template-columns:repeat(3,1fr)!important}.action-grid.two{grid-template-columns:repeat(2,1fr)!important}.action-icon{width:24px!important;height:24px!important;font-size:15px!important}.action-name{font-size:8px!important}.hardware-buttons{gap:18px}
 }
+
+/* v2.6.0 — reference-inspired cute pixel mascots */
+:root{--pp-outline:#27233a;--pp-pixel-hi:#fffdf2;--pp-pixel-soft:#ffd8e5}
+.pet-avatar{width:220px!important;height:285px!important;filter:drop-shadow(0 7px 0 rgba(58,50,75,.08));}
+.pixel-creature{position:absolute;left:50%;top:24px;width:170px;height:236px;transform:translateX(-50%);z-index:5}
+.pixel-body{position:absolute;left:11px;right:11px;top:55px;height:151px;border:4px solid var(--pp-outline);border-radius:48% 48% 42% 42% / 46% 46% 44% 44%;background:var(--pet-main);box-shadow:inset -9px -10px 0 rgba(0,0,0,.055),inset 8px 6px 0 rgba(255,255,255,.14);overflow:hidden}
+.pixel-body:before{content:"";position:absolute;right:-3px;bottom:-2px;width:60%;height:45%;background:var(--pet-shadow);opacity:.12;clip-path:polygon(28% 0,100% 0,100% 100%,0 100%)}
+.pixel-body-shine{position:absolute;left:24px;top:16px;width:34px;height:18px;background:rgba(255,255,255,.28);box-shadow:7px -5px 0 rgba(255,255,255,.12)}
+.pixel-belly{position:absolute;left:50%;bottom:15px;width:76px;height:39px;transform:translateX(-50%);background:rgba(255,255,255,.16);border:2px solid rgba(39,35,58,.10);border-radius:50%;}
+.pixel-face{position:absolute;left:0;right:0;top:38px;height:88px}
+.pixel-eye{position:absolute;top:0;width:29px;height:36px;background:var(--pet-eye);border:3px solid var(--pp-outline);box-shadow:inset 0 -6px 0 rgba(0,0,0,.12)}
+.pixel-eye:before{content:"";position:absolute;left:4px;top:5px;width:9px;height:9px;background:#fff;box-shadow:4px 0 0 #fff,0 6px 0 rgba(255,255,255,.35)}
+.pixel-eye i{position:absolute;left:18px;bottom:5px;width:4px;height:7px;background:rgba(255,255,255,.3)}
+.pixel-eye.eye-left{left:36px}.pixel-eye.eye-right{right:36px}
+.pixel-blush{position:absolute;top:48px;width:24px;height:9px;background:var(--pet-blush);opacity:.88;box-shadow:3px 0 0 rgba(255,255,255,.18)}
+.pixel-blush.blush-left{left:21px}.pixel-blush.blush-right{right:21px}
+.pixel-mouth{position:absolute;left:50%;top:54px;width:30px;height:15px;transform:translateX(-50%)}
+.pixel-mouth i{position:absolute;top:0;width:5px;height:5px;background:var(--pp-outline)}
+.pixel-mouth i:nth-child(1){left:2px}.pixel-mouth i:nth-child(2){left:12px;top:4px;width:7px;height:4px}.pixel-mouth i:nth-child(3){right:2px}
+.pixel-mark{position:absolute;right:15px;top:16px;width:5px;height:5px;background:#fff4ad;box-shadow:6px 0 0 #fff4ad,0 6px 0 #fff4ad,6px 6px 0 #fff4ad;opacity:0}
+.pet-cat .pixel-mark{opacity:.95}.pet-cat .pixel-body{background:#2c2a33}.pet-cat .pixel-eye{background:#f7d56e}.pet-cat .pixel-blush{background:#c66f7b}
+.pet-dog .pixel-body{background:#9ba0a9}.pet-dog .pixel-body:after{content:"";position:absolute;left:68px;top:71px;width:31px;height:22px;background:#d9d7d2;border:2px solid rgba(39,35,58,.45);border-radius:50%;opacity:.9}
+.pixel-ear{position:absolute;z-index:4}
+.pixel-ear span{position:absolute;display:block;background:rgba(255,255,255,.16)}
+.bunny-ear{top:8px;width:44px;height:80px;border:4px solid var(--pp-outline);background:var(--pet-main);clip-path:polygon(34% 0,68% 0,100% 88%,73% 100%,50% 79%,26% 100%,0 88%)}
+.bunny-ear.e1{left:26px;transform:rotate(-7deg)}.bunny-ear.e2{right:26px;transform:rotate(7deg)}
+.bunny-ear span{left:12px;top:12px;width:18px;height:50px;background:rgba(240,150,170,.42);clip-path:polygon(30% 0,70% 0,100% 90%,72% 100%,50% 78%,28% 100%,0 90%)}
+.cat-ear{top:31px;width:48px;height:49px;border:4px solid var(--pp-outline);background:#2c2a33;clip-path:polygon(50% 0,100% 100%,0 100%)}.cat-ear.e1{left:27px;transform:rotate(-6deg)}.cat-ear.e2{right:27px;transform:rotate(6deg)}
+.cat-ear span{left:14px;top:13px;width:20px;height:25px;background:#9f626f;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.dog-ear{top:54px;width:48px;height:72px;border:4px solid var(--pp-outline);background:var(--pet-shadow);border-radius:45% 55% 50% 50%;box-shadow:inset -5px -5px 0 rgba(0,0,0,.08)}.dog-ear.e1{left:12px;transform:rotate(-18deg)}.dog-ear.e2{right:12px;transform:rotate(18deg)}
+.dog-ear span{inset:9px 10px;background:rgba(255,255,255,.08);border-radius:inherit}
+.pixel-tail{position:absolute;z-index:2}
+.bunny-tail{right:0;top:111px;width:33px;height:33px;background:#fff;border:4px solid var(--pp-outline);border-radius:50%;box-shadow:inset -4px -4px 0 rgba(0,0,0,.05)}
+.cat-tail{right:-4px;top:118px;width:40px;height:55px;border:7px solid #2c2a33;border-left-color:transparent;border-bottom-color:transparent;border-radius:50%;transform:rotate(18deg);filter:drop-shadow(2px 2px 0 var(--pp-outline))}
+.dog-tail{right:-4px;top:118px;width:39px;height:39px;border:7px solid var(--pet-shadow);border-left-color:transparent;border-top-color:transparent;border-radius:50%;transform:rotate(-8deg);filter:drop-shadow(2px 2px 0 var(--pp-outline))}
+/* reference-like species palettes */
+.pet-bunny .pixel-body{background:#fffafc}.pet-bunny .pixel-eye{background:#2e2a42}.pet-bunny .pixel-blush{background:#f08fa5}.pet-bunny .pixel-body-shine{background:rgba(255,255,255,.75)}
+/* Make expressions cute and large on every device */
+.state-hungry .pixel-eye,.state-sad .pixel-eye{transform:translateY(2px) scale(.94)}
+.mood-good .pixel-eye:before{box-shadow:4px 0 0 #fff,0 6px 0 rgba(255,255,255,.45),4px 6px 0 rgba(255,255,255,.45)}
+@media(max-width:760px){.pet-avatar{width:200px!important;height:270px!important}.pixel-creature{transform:translateX(-50%) scale(.92);transform-origin:top center}.pixel-eye{width:27px;height:34px}.pixel-eye.eye-left{left:34px}.pixel-eye.eye-right{right:34px}}
+@media(max-width:430px){.pixel-creature{transform:translateX(-50%) scale(.82)}.pet-avatar{width:190px!important}}
