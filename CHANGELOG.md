@@ -1,6 +1,5 @@
 # Changelog
 
-## 3.2.1
-- 按用户提供的 CSS 原样替换 style.css。
-- 保留现有 index.js、悬浮球和交互逻辑。
-- 更新版本号以便 SillyTavern 获取更新。
+## 3.1.2
+- 修复宠物不可见：为当前 `pixel-sprite-wrap` DOM 补齐 12px box-shadow 像素精灵渲染。
+- 保留 Tamagotchi 视觉 CSS。
