@@ -403,3 +403,105 @@
 @keyframes fxRope{0%{opacity:0;transform:rotate(24deg) scale(.75)}20%{opacity:1}50%{transform:rotate(-12deg) scale(1)}80%{transform:rotate(24deg) scale(1)}100%{opacity:0}}@keyframes fxNote{0%{opacity:0;transform:translateY(10px)}25%{opacity:1}100%{opacity:0;transform:translateY(-28px)}}@keyframes fxBubble{0%{opacity:0;transform:translateY(20px) scale(.5)}25%{opacity:1}100%{opacity:0;transform:translateY(-20px) scale(1.2)}}@keyframes fxJump{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-22px) rotate(-4deg)}50%{transform:translateY(-4px) rotate(4deg)}75%{transform:translateY(-20px) rotate(-3deg)}}@keyframes fxWelcome{0%,100%{transform:scale(1)}35%{transform:scale(1.08,.95)}65%{transform:scale(.97,1.04)}}
 .outfit-layer,.accessory-layer,.garment-collar,.garment-sleeve,.garment-trim{display:none!important}
 @media(max-width:760px){.pet-art-wrap{width:280px!important;height:310px!important;bottom:60px!important}.dango-ball{width:150px;height:150px}.bunny-ear{width:42px;height:66px}.bunny-ear.e1{left:48px}.bunny-ear.e2{right:48px}.cat-ear{width:44px;height:49px}.cat-ear.e1{left:49px}.cat-ear.e2{right:49px}.dog-ear{width:43px;height:56px}.dog-ear.e1{left:43px}.dog-ear.e2{right:43px}.tail{right:16px!important}.face-eyes{top:50px!important}.face-mouth{top:75px!important}.blush{top:75px!important}.fx-rope.left{left:34px}.fx-rope.right{right:34px}}
+
+/* v2.3.0 — hard pixel-art dango pets */
+.pet-avatar, .pet-art-wrap, .dango-ball, .dango-ear, .tail, .shine, .belly-glow,
+.face-eyes, .face-mouth, .blush, .dirty-bubbles, .tear-drop, .heart-pop, .hunger-pop {
+  image-rendering: pixelated;
+}
+
+/* Force a chunky 8-bit silhouette instead of a smooth vector circle. */
+.dango-ball {
+  width: 176px !important;
+  height: 176px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--pet-main) !important;
+  clip-path: polygon(
+    28px 0, 148px 0, 148px 4px, 160px 4px, 160px 12px, 168px 12px,
+    168px 24px, 176px 24px, 176px 52px, 180px 52px, 180px 124px,
+    176px 124px, 176px 148px, 168px 148px, 168px 160px, 160px 160px,
+    160px 168px, 148px 168px, 148px 176px, 28px 176px, 28px 172px,
+    16px 172px, 16px 164px, 8px 164px, 8px 152px, 0 152px,
+    0 124px, -4px 124px, -4px 52px, 0 52px, 0 24px, 8px 24px,
+    8px 12px, 16px 12px, 16px 4px, 28px 4px
+  ) !important;
+  box-shadow: none !important;
+}
+.dango-ball::before {
+  inset: 0 !important;
+  border-radius: 0 !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.20) 0 18px, transparent 18px 100%) !important;
+}
+.dango-ball::after {
+  left: 30px !important;
+  right: auto !important;
+  bottom: 18px !important;
+  width: 116px !important;
+  height: 16px !important;
+  transform: none !important;
+  border-radius: 0 !important;
+  background: rgba(0,0,0,.06) !important;
+  box-shadow: 8px 4px 0 rgba(0,0,0,.025), -8px 4px 0 rgba(0,0,0,.025) !important;
+}
+.belly-glow {
+  left: 50% !important;
+  bottom: 30px !important;
+  width: 72px !important;
+  height: 28px !important;
+  transform: translateX(-50%) !important;
+  border-radius: 0 !important;
+  border: 0 !important;
+  background: rgba(255,255,255,.12) !important;
+  box-shadow: 0 4px 0 rgba(255,255,255,.06), 4px 8px 0 rgba(0,0,0,.025) !important;
+}
+
+.dango-ear { border-radius: 0 !important; box-shadow: none !important; }
+.bunny-ear {
+  width: 40px !important; height: 72px !important; border: 0 !important;
+  clip-path: polygon(25% 0,75% 0,75% 5px,90% 5px,90% 12px,100% 12px,100% 58px,90% 58px,90% 70px,75% 70px,75% 72px,25% 72px,25% 70px,10% 70px,10% 58px,0 58px,0 12px,10% 12px,10% 5px,25% 5px);
+  background: var(--pet-main) !important;
+}
+.bunny-ear:after { inset: 10px 9px 12px !important; border-radius: 0 !important; background: #f0a0ad !important; opacity: .55; }
+.cat-ear {
+  width: 46px !important; height: 52px !important; border: 0 !important;
+  clip-path: polygon(50% 0,60% 8px,70% 8px,70% 16px,82% 16px,82% 28px,92% 28px,92% 40px,100% 40px,100% 52px,0 52px,0 40px,8% 40px,8% 28px,18% 28px,18% 16px,30% 16px,30% 8px,40% 8px);
+  background: var(--pet-main) !important;
+}
+.cat-ear:after { left: 12px !important; right: 12px !important; bottom: 8px !important; height: 22px !important; background:#a45d68 !important; clip-path: polygon(50% 0,100% 100%,0 100%); }
+.dog-ear {
+  width: 44px !important; height: 60px !important; border: 0 !important; border-radius: 0 !important;
+  clip-path: polygon(18% 0,82% 0,82% 8px,92% 8px,92% 18px,100% 18px,100% 46px,92% 46px,92% 56px,76% 56px,76% 60px,24% 60px,24% 56px,8% 56px,8% 46px,0 46px,0 18px,8% 18px,8% 8px,18% 8px);
+  background: var(--pet-shadow) !important;
+}
+
+.tail {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--pet-main) !important;
+  width: 34px !important;
+  height: 34px !important;
+  box-shadow: 8px 0 0 var(--pet-main), 8px 8px 0 var(--pet-main), 0 8px 0 var(--pet-main), -4px 8px 0 var(--pet-main) !important;
+}
+.pet-cat .tail { background:#2b2a31 !important; box-shadow: 8px 0 0 #2b2a31, 8px 8px 0 #2b2a31, 0 8px 0 #2b2a31, -4px 8px 0 #2b2a31 !important; }
+.pet-dog .tail { background:#9197a2 !important; box-shadow: 8px 0 0 #9197a2, 8px 8px 0 #9197a2, 0 8px 0 #9197a2, -4px 8px 0 #9197a2 !important; }
+
+.shine {
+  left: 28px !important; top: 20px !important; width: 24px !important; height: 12px !important;
+  border-radius: 0 !important; background: rgba(255,255,255,.5) !important;
+  box-shadow: 8px 0 0 rgba(255,255,255,.5), 0 8px 0 rgba(255,255,255,.25) !important;
+}
+.face-eyes { font-family: ui-monospace, monospace !important; font-weight: 900 !important; text-shadow: 2px 0 0 currentColor !important; }
+.blush { border-radius: 0 !important; height: 6px !important; box-shadow: 4px 0 0 currentColor !important; opacity:.55; }
+
+/* Pixel sparkle and state effects use square blocks. */
+.pixel-spark, .dirty-bubbles i, .name-dot, .stage-caption #pet-status-dot { border-radius: 0 !important; }
+.heart-pop { text-shadow: 3px 0 0 #fff, 0 3px 0 #fff !important; }
+
+@media(max-width:760px){
+  .dango-ball { width: 156px !important; height: 156px !important; }
+  .bunny-ear { width: 36px !important; height: 64px !important; }
+  .cat-ear { width: 40px !important; height: 46px !important; }
+  .dog-ear { width: 39px !important; height: 53px !important; }
+}

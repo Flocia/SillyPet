@@ -4,7 +4,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '2.2.0';
+    const VERSION = '2.3.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔团子', color: '#f7f7fb', shadow: '#c9cad5', eye: '#413b4d', blush: '#f0a4ad' },
