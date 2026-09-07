@@ -1,5 +1,5 @@
 {
-  "display_name": "SillyPet · 像素团子拓麻歌子",
+  "display_name": "SillyPet · 电子宠物小屋",
   "loading_order": 80,
   "requires": [],
   "optional": [],
@@ -7,7 +7,7 @@
   "js": "index.js",
   "css": "style.css",
   "author": "Flocia",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "homePage": "https://github.com/Flocia/SillyPet",
   "auto_update": true
 }
