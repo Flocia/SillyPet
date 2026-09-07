@@ -1,5 +1,17 @@
 # SillyPet
 
-SillyTavern 电子宠物插件。v3.2.0 使用用户提供的像素兔 CSS box-shadow 风格重做三种宠物：白兔、黑猫、灰狗。保留现有拓麻歌子界面、悬浮球、喂食/洗澡/玩耍功能。
+SillyTavern 电子宠物插件。
 
-安装：把本仓库作为 GitHub Repository URL 安装。
+本版按指定 CSS 直接替换 `style.css`，其余功能代码保持不变。
+
+## GitHub 安装
+在 SillyTavern 的扩展安装界面粘贴：
+
+https://github.com/Flocia/SillyPet
+
+## 文件
+- manifest.json
+- index.js
+- style.css
+- README.md
+- CHANGELOG.md

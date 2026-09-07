@@ -7,8 +7,8 @@
   "js": "index.js",
   "css": "style.css",
   "author": "Flocia",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "homePage": "https://github.com/Flocia/SillyPet",
   "auto_update": true,
-  "description": "三种 12px box-shadow 像素宠物，参考用户提供的像素兔风格"
+  "description": "SillyPet：使用指定 box-shadow 像素 CSS 的拓麻歌子风电子宠物"
 }
