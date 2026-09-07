@@ -11,3 +11,7 @@ SillyTavern third-party extension. Mobile-friendly virtual pet with three round 
 
 ## Install
 Upload `manifest.json`, `index.js`, `style.css`, `README.md`, and `CHANGELOG.md` to the repository root and install the GitHub repository URL from SillyTavern.
+
+
+### v2.3.1
+摸摸头改为手势模式：点击“摸摸头”后，将鼠标/触控指针停在宠物头部并左右滑动即可连续触发摸头互动。

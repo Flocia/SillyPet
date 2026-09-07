@@ -4,7 +4,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '2.3.0';
+    const VERSION = '2.3.1';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔团子', color: '#f7f7fb', shadow: '#c9cad5', eye: '#413b4d', blush: '#f0a4ad' },
@@ -50,6 +50,9 @@
     let ticker = null;
     let initialized = false;
     let keydownBound = false;
+    let pattingMode = false;
+    let patSession = null;
+    let lastPatRewardAt = 0;
 
     function defaults() {
         return { petId: 'bunny', name: '小团子', mood: 80, clean: 85, fullness: 74, lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
@@ -159,16 +162,167 @@
     }
 
     function bindEvents(host){
-        host.addEventListener('click',event=>{const button=event.target.closest('[data-action],[data-tab]');if(!button)return;if(button.dataset.tab)switchTab(button.dataset.tab);const action=button.dataset.action;if(!action)return; if(action==='close')togglePanel(false); else if(action==='rename')renamePet(); else if(action==='select-pet')selectPet(button.dataset.id); else if(action==='feed')doFeed(button.dataset.id); else if(action==='bath')doBath(button.dataset.id); else if(action==='play')doPlay(button.dataset.id); else if(action==='reset')resetPet();});
-        if(!keydownBound){document.addEventListener('keydown',event=>{if(event.key==='Escape')togglePanel(false);});keydownBound=true;}
+        host.addEventListener('click',event=>{
+            const button=event.target.closest('[data-action],[data-tab]');
+            if(!button)return;
+            if(button.dataset.tab)switchTab(button.dataset.tab);
+            const action=button.dataset.action;
+            if(!action)return;
+            if(action==='close'){stopPatMode();togglePanel(false);}
+            else if(action==='rename')renamePet();
+            else if(action==='select-pet')selectPet(button.dataset.id);
+            else if(action==='feed')doFeed(button.dataset.id);
+            else if(action==='bath')doBath(button.dataset.id);
+            else if(action==='play')doPlay(button.dataset.id);
+            else if(action==='reset')resetPet();
+        });
+
+        const stage = host.querySelector('.pet-stage');
+        const artWrap = host.querySelector('.pet-art-wrap');
+        const patButton = host.querySelector('[data-action=\"play\"][data-id=\"pat\"]');
+        const updatePatCursor = (event)=>{
+            if(!pattingMode || !artWrap) return;
+            const rect=artWrap.getBoundingClientRect();
+            const x=event.clientX-rect.left, y=event.clientY-rect.top;
+            const w=rect.width, h=rect.height;
+            // Top-center ellipse is the dango head area; ears sit above it.
+            const cx=w/2, cy=h*0.58;
+            const nx=(x-cx)/(w*0.27), ny=(y-cy)/(h*0.30);
+            const inside=(nx*nx + ny*ny) <= 1.0;
+            const art=host.querySelector('.pet-avatar');
+            art?.classList.toggle('pat-hover',inside);
+            host.classList.toggle('pat-over-pet',inside);
+            if(inside){
+                const fx=host.querySelector('.fx-hand');
+                if(fx){
+                    fx.style.left=`${Math.max(8,Math.min(92,(x/w)*100))}%`;
+                    fx.style.top=`${Math.max(4,Math.min(55,(y/h)*100-10))}%`;
+                    fx.style.opacity='1';
+                    fx.style.transform='translate(-50%,-50%) rotate(-18deg)';
+                }
+                triggerPatStroke(event);
+            }else{
+                host.querySelector('.fx-hand')?.style.setProperty('opacity','0');
+            }
+        };
+        const startPat = ()=>{
+            if(!artWrap) return;
+            pattingMode=true;
+            patSession={startX:0,startY:0,lastX:0,lastY:0};
+            host.classList.add('pat-mode-active');
+            patButton?.classList.add('active');
+            const reaction=host.querySelector('#pet-reaction');
+            const status=host.querySelector('#pet-status-text');
+            if(reaction)reaction.textContent='摸摸模式开启：把鼠标停在头顶轻轻来回滑动吧 ✋';
+            if(status)status.textContent='请在头顶来回滑动';
+        };
+        const stopPatModeLocal=()=>{
+            pattingMode=false;
+            patSession=null;
+            host.classList.remove('pat-mode-active','pat-over-pet');
+            patButton?.classList.remove('active');
+            host.querySelector('.fx-hand')?.style.setProperty('opacity','0');
+            host.querySelector('.pet-avatar')?.classList.remove('pat-hover','being-patted');
+        };
+        stage?.addEventListener('pointermove',updatePatCursor,{passive:true});
+        stage?.addEventListener('pointerleave',()=>{
+            host.classList.remove('pat-over-pet');
+            host.querySelector('.fx-hand')?.style.setProperty('opacity','0');
+        });
+        stage?.addEventListener('pointerdown',event=>{
+            if(!pattingMode)return;
+            if(event.button!==undefined && event.button!==0 && event.pointerType!=='touch')return;
+            patSession={startX:event.clientX,startY:event.clientY,lastX:event.clientX,lastY:event.clientY};
+            updatePatCursor(event);
+        },{passive:true});
+        stage?.addEventListener('pointerup',()=>{
+            if(pattingMode && host.classList.contains('pat-over-pet')) return;
+        });
+        stage?.addEventListener('pointercancel',()=>{if(pattingMode)host.querySelector('.fx-hand')?.style.setProperty('opacity','0');});
+        host._stopPatMode = stopPatModeLocal;
+        if(!keydownBound){document.addEventListener('keydown',event=>{if(event.key==='Escape'){stopPatMode();togglePanel(false);}});keydownBound=true;}
     }
-    function togglePanel(force){const panel=document.getElementById('st-pixel-pet-panel'),fab=document.getElementById('st-pixel-pet-fab');if(!panel||!fab)return;const currentOpen=panel.getAttribute('aria-hidden')==='false';const open=force===undefined?!currentOpen:Boolean(force);panel.setAttribute('aria-hidden',String(!open));fab.classList.toggle('is-open',open);fab.setAttribute('aria-expanded',String(open));document.documentElement.classList.toggle('st-sillypet-open',open);}
+    function togglePanel(force){const panel=document.getElementById('st-pixel-pet-panel'),fab=document.getElementById('st-pixel-pet-fab');if(!panel||!fab)return;const currentOpen=panel.getAttribute('aria-hidden')==='false';const open=force===undefined?!currentOpen:Boolean(force); if(!open) stopPatMode(); panel.setAttribute('aria-hidden',String(!open));fab.classList.toggle('is-open',open);fab.setAttribute('aria-expanded',String(open));document.documentElement.classList.toggle('st-sillypet-open',open);}
     function switchTab(tab){document.querySelectorAll('#st-pixel-pet-root .pet-tab').forEach(item=>item.classList.toggle('active',item.dataset.tab===tab));document.querySelectorAll('#st-pixel-pet-root .tab-content').forEach(item=>item.classList.toggle('active',item.id===`tab-${tab}`));}
     function ensureFresh(){applyDecay();}
     function selectPet(id){if(!PETS[id])return;ensureFresh();state.petId=id;state.mood=clamp(state.mood+rand(2,6));state.lastAction=`遇见了 ${PETS[id].name}！`;state.lastActionType='pet';saveState();recordCare();updatePanel(true);playFx('select');}
     function doFeed(id){ensureFresh();const food=FOODS.find(x=>x.id===id);if(!food)return;const amount=rand(food.gain[0],food.gain[1]),moodGain=rand(4,9);state.fullness=clamp(state.fullness+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.feed[state.petId])} 饱肚 +${amount} / 心情 +${moodGain}`;state.lastActionType='feed';saveState();recordCare();updatePanel(true);playFx('feed');}
     function doBath(id){ensureFresh();const tool=TOOLS.find(x=>x.id===id);if(!tool)return;const amount=rand(tool.gain[0],tool.gain[1]),moodGain=rand(5,11);state.clean=clamp(state.clean+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.bath)} 清洁 +${amount} / 心情 +${moodGain}`;state.lastActionType='bath';saveState();recordCare();updatePanel(true);playFx('bath');}
-    function doPlay(id){ensureFresh();const action=PLAY_ACTIONS.find(x=>x.id===id);if(!action)return;const moodGain=rand(action.mood[0],action.mood[1]);state.mood=clamp(state.mood+moodGain);state.clean=clamp(state.clean+rand(action.clean[0],action.clean[1]));state.fullness=clamp(state.fullness+rand(action.fullness[0],action.fullness[1]));state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play[id])} 心情 +${moodGain}`;state.lastActionType=id;saveState();recordCare();updatePanel(true);playFx(id);}
+    function triggerPatStroke(event){
+        if(!pattingMode)return;
+        const host=document.getElementById('st-pixel-pet-root');
+        if(!host || !host.classList.contains('pat-over-pet'))return;
+        const now=Date.now();
+        const artWrap=host.querySelector('.pet-art-wrap');
+        if(!artWrap)return;
+        const rect=artWrap.getBoundingClientRect();
+        const x=event.clientX-rect.left, y=event.clientY-rect.top;
+        if(patSession){
+            const moved=Math.hypot(x-(patSession.lastX||x),y-(patSession.lastY||y));
+            if(moved<4 && now-lastPatRewardAt<220)return;
+        }
+        if(now-lastPatRewardAt<260)return;
+        lastPatRewardAt=now;
+        if(patSession){patSession.lastX=x;patSession.lastY=y;}
+        ensureFresh();
+        const moodGain=rand(2,5);
+        state.mood=clamp(state.mood+moodGain);
+        state.clean=clamp(state.clean+rand(0,1));
+        state.lastAction=`${PETS[state.petId].name} 舒服地被摸着头…… 心情 +${moodGain}`;
+        state.lastActionType='pat';
+        saveState();recordCare();
+        const status=host.querySelector('#pet-status-text');
+        const reaction=host.querySelector('#pet-reaction');
+        if(status)status.textContent='呼噜呼噜……继续摸摸';
+        if(reaction)reaction.textContent='手指正在头顶轻轻来回滑动 ✋';
+        const art=host.querySelector('.pet-avatar');
+        if(art){art.classList.remove('being-patted');void art.offsetWidth;art.classList.add('being-patted');}
+        updateStatsOnly(host);
+    }
+
+    function updateStatsOnly(host){
+        const stats=host?.querySelector('.stats-card .stats-list');
+        if(stats)stats.innerHTML=`${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}`;
+        const care=host?.querySelector('#care-count');
+        if(care)care.textContent=getCareCount();
+    }
+
+    function stopPatMode(){
+        const host=document.getElementById('st-pixel-pet-root');
+        pattingMode=false;patSession=null;
+        host?.classList.remove('pat-mode-active','pat-over-pet');
+        host?.querySelector('[data-action=\"play\"][data-id=\"pat\"]')?.classList.remove('active');
+        host?.querySelector('.fx-hand')?.style.setProperty('opacity','0');
+        host?.querySelector('.pet-avatar')?.classList.remove('pat-hover','being-patted');
+    }
+
+    function doPlay(id){
+        ensureFresh();
+        const action=PLAY_ACTIONS.find(x=>x.id===id);
+        if(!action)return;
+        if(id==='pat'){
+            const host=document.getElementById('st-pixel-pet-root');
+            if(pattingMode){ stopPatMode(); return; }
+            // Pat is now a gesture mode: clicking the option only arms it.
+            pattingMode=true;
+            patSession={startX:0,startY:0,lastX:0,lastY:0};
+            lastPatRewardAt=0;
+            host?.classList.add('pat-mode-active');
+            host?.querySelector('[data-action=\"play\"][data-id=\"pat\"]')?.classList.add('active');
+            const reaction=host?.querySelector('#pet-reaction');
+            const status=host?.querySelector('#pet-status-text');
+            if(reaction)reaction.textContent='摸摸模式开启：把鼠标停在头顶轻轻来回滑动吧 ✋';
+            if(status)status.textContent='请在头顶来回滑动';
+            return;
+        }
+        const moodGain=rand(action.mood[0],action.mood[1]);
+        state.mood=clamp(state.mood+moodGain);
+        state.clean=clamp(state.clean+rand(action.clean[0],action.clean[1]));
+        state.fullness=clamp(state.fullness+rand(action.fullness[0],action.fullness[1]));
+        state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play[id])} 心情 +${moodGain}`;
+        state.lastActionType=id;
+        saveState();recordCare();updatePanel(true);playFx(id);
+    }
     function resetPet(){if(!window.confirm('要把宠物恢复成全新的初始状态吗？'))return;state=defaults();localStorage.removeItem(CARE_KEY);saveState();updatePanel(true);}
     function renamePet(){const name=window.prompt('给你的宠物取个名字：',state.name||'小团子');if(name&&name.trim()){state.name=name.trim().slice(0,12);state.lastAction=`它的名字改成了「${state.name}」`;saveState();updatePanel(true);}}
     function getCareCount(){const value=Number(localStorage.getItem(CARE_KEY)||0);return Number.isFinite(value)?value:0;}
