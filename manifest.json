@@ -1,5 +1,5 @@
 {
-  "display_name": "SillyPet · 黑猫像素版",
+  "display_name": "SillyPet · 黑猫像素修正版",
   "loading_order": 80,
   "requires": [],
   "optional": [],
@@ -7,8 +7,8 @@
   "js": "index.js",
   "css": "style.css",
   "author": "Flocia",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "homePage": "https://github.com/Flocia/SillyPet",
   "auto_update": true,
-  "description": "三种 12px box-shadow 像素宠物，参考用户提供的像素兔风格"
+  "description": "v3.2 UI布局 + v3.1.2黑猫像素外形，修复宠物不可见"
 }
