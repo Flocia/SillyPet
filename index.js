@@ -5,7 +5,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v11';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '1.3.0';
+    const VERSION = '1.5.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔子', subtitle: '软乎乎 · 喜欢胡萝卜', color: '#f8f8fb', shadow: '#cfcfd9', eye: '#463b53', blush: '#f3a4ad' },
@@ -183,34 +183,48 @@
                 <div id="st-pixel-pet-panel" class="pixel-pet-panel" aria-hidden="true" role="dialog" aria-label="电子宠物小屋">
                     <div class="pet-backdrop-close" data-action="close"></div>
                     <div class="pet-window" role="document">
+                        <div class="pet-shell-rivet r1"></div><div class="pet-shell-rivet r2"></div>
                         <div class="pet-topbar">
-                            <div><div class="eyebrow">PIXEL PET HOUSE · v${VERSION}</div><div class="pet-title">电子宠物小屋 <span>✦</span></div></div>
-                            <div class="pet-top-actions"><button class="pet-mini-btn" data-action="reset" title="重置宠物" aria-label="重置宠物">↺</button><button class="pet-mini-btn" data-action="close" title="关闭" aria-label="关闭">×</button></div>
+                            <div class="device-brand">
+                                <div class="device-logo">SILLY<span>PET</span></div>
+                                <div class="device-subtitle">VIRTUAL FRIEND • v${VERSION}</div>
+                            </div>
+                            <div class="device-status">
+                                <span class="device-heart">♥</span><span class="device-battery">▰▰▰</span>
+                                <button class="pet-mini-btn" data-action="reset" title="重置宠物" aria-label="重置宠物">↺</button>
+                                <button class="pet-mini-btn" data-action="close" title="关闭" aria-label="关闭">×</button>
+                            </div>
                         </div>
                         <div class="pet-main-grid">
                             <section class="pet-stage">
-                                <div class="stage-grid"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+                                <div class="lcd-bezel"></div><div class="stage-grid"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+                                <div class="lcd-topline"><span>DAY 01</span><span class="lcd-sun">☀</span><span>08:15</span></div>
                                 <div class="stage-caption"><span id="pet-status-dot"></span><span id="pet-status-text">${escapeHtml(petFace().label)}</span></div>
                                 <div class="pet-art-wrap">${petArtHtml()}</div>
                                 <div class="name-plate"><span class="name-dot"></span><span id="pet-name-label">${escapeHtml(state.name)}</span><button class="rename-btn" data-action="rename" aria-label="修改名字">✎</button></div>
+                                <div class="lcd-baseline"><span>♥ HAPPY FRIEND</span><span>STAY CLOSE</span></div>
                             </section>
                             <aside class="pet-side">
-                                <div class="pet-selector-block"><div class="section-title">选择宠物 <span>SELECT</span></div>
-                                    <div class="pet-selector">${Object.values(PETS).map(p => `<button class="pet-choice ${state.petId===p.id?'active':''}" data-action="select-pet" data-id="${p.id}"><span class="mini-pet mini-${p.id}"></span><span>${p.name}</span></button>`).join('')}</div>
+                                <div class="pet-card pet-selector-block">
+                                    <div class="section-title"><span>小伙伴</span><span>FRIENDS</span></div>
+                                    <div class="pet-selector">${Object.values(PETS).map(p => `<button class="pet-choice ${state.petId===p.id?'active':''}" data-action="select-pet" data-id="${p.id}"><span class="mini-pet mini-${p.id}"></span><span>${p.name}</span><b>●</b></button>`).join('')}</div>
                                 </div>
-                                <div class="stats-card"><div class="section-title">状态 <span>STATUS</span></div><div class="stats-list">${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}</div></div>
-                                <div class="reaction-card"><div class="reaction-badge">NOW</div><div id="pet-reaction">${escapeHtml(state.lastAction || '刚刚见面')}</div><small>状态会随着时间慢慢变化</small></div>
+                                <div class="pet-card stats-card">
+                                    <div class="section-title"><span>状态条</span><span>STATUS</span></div>
+                                    <div class="stats-list">${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}</div>
+                                </div>
+                                <div class="pet-card reaction-card"><div class="reaction-ribbon">TODAY</div><div id="pet-reaction">${escapeHtml(state.lastAction || '刚刚见面')}</div><small>好好照顾它，数值会随时间变化。</small></div>
                             </aside>
                         </div>
-                        <div class="pet-tabs" role="tablist">
-                            <button class="pet-tab active" data-tab="feed" role="tab"><span>🍽</span>喂食</button>
-                            <button class="pet-tab" data-tab="bath" role="tab"><span>🫧</span>洗澡</button>
-                            <button class="pet-tab" data-tab="dress" role="tab"><span>✦</span>换装</button>
+                        <div class="pet-tabs" role="tablist" aria-label="照顾菜单">
+                            <button class="pet-tab active" data-tab="feed" role="tab"><span>◉</span><strong>喂喂我</strong><small>FOOD</small></button>
+                            <button class="pet-tab" data-tab="bath" role="tab"><span>≈</span><strong>洗香香</strong><small>BATH</small></button>
+                            <button class="pet-tab" data-tab="dress" role="tab"><span>◆</span><strong>穿漂亮</strong><small>DRESS</small></button>
                         </div>
-                        <div class="tab-content active" id="tab-feed" role="tabpanel"><div class="action-grid">${FOODS.map(x => actionCard(x,'feed')).join('')}</div><div class="tip-line">饿了会出现肚子咕噜和摇晃动画，记得及时补充能量。</div></div>
-                        <div class="tab-content" id="tab-bath" role="tabpanel"><div class="action-grid two">${TOOLS.map(x => actionCard(x,'bath')).join('')}</div><div class="tip-line">变脏时宠物会出现小污点和嫌弃表情。</div></div>
-                        <div class="tab-content" id="tab-dress" role="tabpanel"><div class="action-grid three">${OUTFITS.map(x => actionCard(x,'dress')).join('')}</div><div class="tip-line">换装会提升心情，每套服装都有独立的小配饰。</div></div>
-                        <div class="pet-footer"><span>♡ 今日照顾次数：<b id="care-count">${getCareCount()}</b></span><span>Auto-save · Local</span></div>
+                        <div class="tab-content active" id="tab-feed" role="tabpanel"><div class="menu-hint">选择一份小点心投喂 <span>· 每次都会有随机奖励</span></div><div class="action-grid">${FOODS.map(x => actionCard(x,'feed')).join('')}</div><div class="tip-line">吃饱了会变得开心又有精神。</div></div>
+                        <div class="tab-content" id="tab-bath" role="tabpanel"><div class="menu-hint">选择清洁用品 <span>· 洗干净会恢复心情</span></div><div class="action-grid two">${TOOLS.map(x => actionCard(x,'bath')).join('')}</div><div class="tip-line">变脏时会出现小污点和不开心的小动作。</div></div>
+                        <div class="tab-content" id="tab-dress" role="tabpanel"><div class="menu-hint">挑一套今天的造型 <span>· 六种风格随时更换</span></div><div class="action-grid three">${OUTFITS.map(x => actionCard(x,'dress')).join('')}</div><div class="tip-line">穿上喜欢的衣服，心情会获得随机提升。</div></div>
+                        <div class="pet-footer"><span>♡ 今日照顾 <b id="care-count">${getCareCount()}</b> 次</span><span>LOCAL SAVE · ALWAYS ON</span></div>
                     </div>
                 </div>`;
             document.body.appendChild(host);
@@ -222,13 +236,8 @@
 
     function ensureLauncher() {
         let fab = document.getElementById('st-pixel-pet-fab');
-        if (fab) {
-            fab.style.setProperty('display', 'flex', 'important');
-            fab.style.setProperty('visibility', 'visible', 'important');
-            fab.style.setProperty('opacity', '1', 'important');
-            fab.style.setProperty('pointer-events', 'auto', 'important');
-            return fab;
-        }
+        if (fab) return fab;
+
         fab = document.createElement('button');
         fab.id = 'st-pixel-pet-fab';
         fab.type = 'button';
@@ -237,10 +246,71 @@
         fab.setAttribute('aria-expanded', 'false');
         fab.title = '打开电子宠物';
         fab.innerHTML = '<span class="paw-pad"></span><span class="paw-toe t1"></span><span class="paw-toe t2"></span><span class="paw-toe t3"></span><span class="paw-toe t4"></span>';
-        // Critical inline fallback: the button remains visible even if a theme/plugin overrides CSS.
-        fab.style.cssText += ';position:fixed!important;right:18px!important;bottom:18px!important;left:auto!important;top:auto!important;width:58px!important;height:58px!important;display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:2147483647!important;margin:0!important;padding:0!important;';
+        fab.style.position = 'fixed';
+        fab.style.right = '16px';
+        fab.style.bottom = '16px';
+        fab.style.left = 'auto';
+        fab.style.top = 'auto';
+        fab.style.width = '58px';
+        fab.style.height = '58px';
+        fab.style.display = 'block';
+        fab.style.visibility = 'visible';
+        fab.style.opacity = '1';
+        fab.style.pointerEvents = 'auto';
+        fab.style.zIndex = '2147483647';
+        fab.style.margin = '0';
+        fab.style.padding = '0';
+        fab.style.border = '0';
         document.body.appendChild(fab);
         fab.addEventListener('click', () => togglePanel());
+
+        // Match the reference launcher: pointer drag on mobile/desktop, click when not moved.
+        let drag = null;
+        fab.addEventListener('pointerdown', event => {
+            if (event.button !== undefined && event.button !== 0) return;
+            const rect = fab.getBoundingClientRect();
+            drag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, originX: rect.left, originY: rect.top, moved: false };
+            fab.setPointerCapture?.(event.pointerId);
+        });
+        fab.addEventListener('pointermove', event => {
+            if (!drag || event.pointerId !== drag.pointerId) return;
+            const dx = event.clientX - drag.startX;
+            const dy = event.clientY - drag.startY;
+            if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+            drag.moved = true;
+            const w = Math.max(fab.offsetWidth || 58, 48);
+            const h = Math.max(fab.offsetHeight || 58, 48);
+            const x = Math.min(Math.max(8, drag.originX + dx), Math.max(8, window.innerWidth - w - 8));
+            const y = Math.min(Math.max(8, drag.originY + dy), Math.max(8, window.innerHeight - h - 8));
+            fab.style.left = `${x}px`;
+            fab.style.top = `${y}px`;
+            fab.style.right = 'auto';
+            fab.style.bottom = 'auto';
+            event.preventDefault();
+        });
+        const endDrag = event => {
+            if (!drag || event.pointerId !== drag.pointerId) return;
+            const moved = drag.moved;
+            drag = null;
+            if (moved) {
+                try { localStorage.setItem('st_sillypet_launcher_pos', JSON.stringify({ x: fab.getBoundingClientRect().left, y: fab.getBoundingClientRect().top })); } catch (_) {}
+                event.preventDefault();
+            }
+        };
+        fab.addEventListener('pointerup', endDrag);
+        fab.addEventListener('pointercancel', () => { drag = null; });
+
+        try {
+            const saved = JSON.parse(localStorage.getItem('st_sillypet_launcher_pos') || 'null');
+            if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
+                const w = Math.max(fab.offsetWidth || 58, 48);
+                const h = Math.max(fab.offsetHeight || 58, 48);
+                fab.style.left = `${Math.min(Math.max(8, saved.x), Math.max(8, window.innerWidth - w - 8))}px`;
+                fab.style.top = `${Math.min(Math.max(8, saved.y), Math.max(8, window.innerHeight - h - 8))}px`;
+                fab.style.right = 'auto';
+                fab.style.bottom = 'auto';
+            }
+        } catch (_) {}
         return fab;
     }
 
@@ -480,10 +550,4 @@
     }
 
     window.SillyPet = Object.freeze({ version: VERSION, init: initInternal, open: () => togglePanel(true), close: () => togglePanel(false) });
-    scheduleInit();
-    if (document.readyState === 'loading') {
-        window.addEventListener('DOMContentLoaded', watchBody, { once: true });
-    } else {
-        watchBody();
-    }
 })();

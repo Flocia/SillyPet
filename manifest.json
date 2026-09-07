@@ -1,13 +1,13 @@
 {
-  "display_name": "SillyPet · 电子宠物小屋",
+  "display_name": "SillyPet · 拓麻歌子电子宠物",
   "loading_order": 80,
   "requires": [],
   "optional": [],
-  "dependencies": [],
   "js": "index.js",
   "css": "style.css",
   "author": "Flocia",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "homePage": "https://github.com/Flocia/SillyPet",
-  "auto_update": true
+  "auto_update": true,
+  "description": "Tamagotchi 风格的 SillyTavern 电子宠物小游戏"
 }
