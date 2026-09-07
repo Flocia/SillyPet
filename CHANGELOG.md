@@ -1,5 +1,9 @@
 # Changelog
 
-## Packaged build
-
-Packaged from the supplied SillyPet Markdown source.
+## 3.0.0
+- 顶球改为真正的 Pointer Events 拖取 + 释放方向投掷。
+- 投掷轨迹带抛物线弧线，命中宠物后播放接球动画。
+- “打滚”改为“弹跳”：进入模式后点击宠物，连续上下弹跳。
+- 肥皂和沐浴露拥有不同的洗澡动画：搓皂泡 / 花洒落水。
+- 修复顶球模式使用错误舞台选择器导致拖动无反应的问题。
+- 保持 GitHub 根目录第三方扩展安装结构和安卓触控适配。
