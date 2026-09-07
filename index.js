@@ -5,7 +5,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v11';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '1.2.0';
+    const VERSION = '1.3.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔子', subtitle: '软乎乎 · 喜欢胡萝卜', color: '#f8f8fb', shadow: '#cfcfd9', eye: '#463b53', blush: '#f3a4ad' },
@@ -174,49 +174,74 @@
     }
 
     function buildPanel() {
-        if (document.getElementById('st-pixel-pet-root')) return;
-        const host = document.createElement('div');
-        host.id = 'st-pixel-pet-root';
-        host.innerHTML = `
-            <button id="st-pixel-pet-fab" class="pixel-pet-fab" aria-label="打开电子宠物" aria-expanded="false" title="打开电子宠物">
-                <span class="paw-pad"></span><span class="paw-toe t1"></span><span class="paw-toe t2"></span><span class="paw-toe t3"></span><span class="paw-toe t4"></span>
-            </button>
-            <div id="st-pixel-pet-panel" class="pixel-pet-panel" aria-hidden="true" role="dialog" aria-label="电子宠物小屋">
-                <div class="pet-backdrop-close" data-action="close"></div>
-                <div class="pet-window" role="document">
-                    <div class="pet-topbar">
-                        <div><div class="eyebrow">PIXEL PET HOUSE · v${VERSION}</div><div class="pet-title">电子宠物小屋 <span>✦</span></div></div>
-                        <div class="pet-top-actions"><button class="pet-mini-btn" data-action="reset" title="重置宠物" aria-label="重置宠物">↺</button><button class="pet-mini-btn" data-action="close" title="关闭" aria-label="关闭">×</button></div>
+        let host = document.getElementById('st-pixel-pet-root');
+        if (!host) {
+            host = document.createElement('div');
+            host.id = 'st-pixel-pet-root';
+            host.setAttribute('data-sillypet-root', '1');
+            host.innerHTML = `
+                <div id="st-pixel-pet-panel" class="pixel-pet-panel" aria-hidden="true" role="dialog" aria-label="电子宠物小屋">
+                    <div class="pet-backdrop-close" data-action="close"></div>
+                    <div class="pet-window" role="document">
+                        <div class="pet-topbar">
+                            <div><div class="eyebrow">PIXEL PET HOUSE · v${VERSION}</div><div class="pet-title">电子宠物小屋 <span>✦</span></div></div>
+                            <div class="pet-top-actions"><button class="pet-mini-btn" data-action="reset" title="重置宠物" aria-label="重置宠物">↺</button><button class="pet-mini-btn" data-action="close" title="关闭" aria-label="关闭">×</button></div>
+                        </div>
+                        <div class="pet-main-grid">
+                            <section class="pet-stage">
+                                <div class="stage-grid"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+                                <div class="stage-caption"><span id="pet-status-dot"></span><span id="pet-status-text">${escapeHtml(petFace().label)}</span></div>
+                                <div class="pet-art-wrap">${petArtHtml()}</div>
+                                <div class="name-plate"><span class="name-dot"></span><span id="pet-name-label">${escapeHtml(state.name)}</span><button class="rename-btn" data-action="rename" aria-label="修改名字">✎</button></div>
+                            </section>
+                            <aside class="pet-side">
+                                <div class="pet-selector-block"><div class="section-title">选择宠物 <span>SELECT</span></div>
+                                    <div class="pet-selector">${Object.values(PETS).map(p => `<button class="pet-choice ${state.petId===p.id?'active':''}" data-action="select-pet" data-id="${p.id}"><span class="mini-pet mini-${p.id}"></span><span>${p.name}</span></button>`).join('')}</div>
+                                </div>
+                                <div class="stats-card"><div class="section-title">状态 <span>STATUS</span></div><div class="stats-list">${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}</div></div>
+                                <div class="reaction-card"><div class="reaction-badge">NOW</div><div id="pet-reaction">${escapeHtml(state.lastAction || '刚刚见面')}</div><small>状态会随着时间慢慢变化</small></div>
+                            </aside>
+                        </div>
+                        <div class="pet-tabs" role="tablist">
+                            <button class="pet-tab active" data-tab="feed" role="tab"><span>🍽</span>喂食</button>
+                            <button class="pet-tab" data-tab="bath" role="tab"><span>🫧</span>洗澡</button>
+                            <button class="pet-tab" data-tab="dress" role="tab"><span>✦</span>换装</button>
+                        </div>
+                        <div class="tab-content active" id="tab-feed" role="tabpanel"><div class="action-grid">${FOODS.map(x => actionCard(x,'feed')).join('')}</div><div class="tip-line">饿了会出现肚子咕噜和摇晃动画，记得及时补充能量。</div></div>
+                        <div class="tab-content" id="tab-bath" role="tabpanel"><div class="action-grid two">${TOOLS.map(x => actionCard(x,'bath')).join('')}</div><div class="tip-line">变脏时宠物会出现小污点和嫌弃表情。</div></div>
+                        <div class="tab-content" id="tab-dress" role="tabpanel"><div class="action-grid three">${OUTFITS.map(x => actionCard(x,'dress')).join('')}</div><div class="tip-line">换装会提升心情，每套服装都有独立的小配饰。</div></div>
+                        <div class="pet-footer"><span>♡ 今日照顾次数：<b id="care-count">${getCareCount()}</b></span><span>Auto-save · Local</span></div>
                     </div>
-                    <div class="pet-main-grid">
-                        <section class="pet-stage">
-                            <div class="stage-grid"></div><div class="cloud c1"></div><div class="cloud c2"></div>
-                            <div class="stage-caption"><span id="pet-status-dot"></span><span id="pet-status-text">${escapeHtml(petFace().label)}</span></div>
-                            <div class="pet-art-wrap">${petArtHtml()}</div>
-                            <div class="name-plate"><span class="name-dot"></span><span id="pet-name-label">${escapeHtml(state.name)}</span><button class="rename-btn" data-action="rename" aria-label="修改名字">✎</button></div>
-                        </section>
-                        <aside class="pet-side">
-                            <div class="pet-selector-block"><div class="section-title">选择宠物 <span>SELECT</span></div>
-                                <div class="pet-selector">${Object.values(PETS).map(p => `<button class="pet-choice ${state.petId===p.id?'active':''}" data-action="select-pet" data-id="${p.id}"><span class="mini-pet mini-${p.id}"></span><span>${p.name}</span></button>`).join('')}</div>
-                            </div>
-                            <div class="stats-card"><div class="section-title">状态 <span>STATUS</span></div><div class="stats-list">${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}</div></div>
-                            <div class="reaction-card"><div class="reaction-badge">NOW</div><div id="pet-reaction">${escapeHtml(state.lastAction || '刚刚见面')}</div><small>状态会随着时间慢慢变化</small></div>
-                        </aside>
-                    </div>
-                    <div class="pet-tabs" role="tablist">
-                        <button class="pet-tab active" data-tab="feed" role="tab"><span>🍽</span>喂食</button>
-                        <button class="pet-tab" data-tab="bath" role="tab"><span>🫧</span>洗澡</button>
-                        <button class="pet-tab" data-tab="dress" role="tab"><span>✦</span>换装</button>
-                    </div>
-                    <div class="tab-content active" id="tab-feed" role="tabpanel"><div class="action-grid">${FOODS.map(x => actionCard(x,'feed')).join('')}</div><div class="tip-line">饿了会出现肚子咕噜和摇晃动画，记得及时补充能量。</div></div>
-                    <div class="tab-content" id="tab-bath" role="tabpanel"><div class="action-grid two">${TOOLS.map(x => actionCard(x,'bath')).join('')}</div><div class="tip-line">变脏时宠物会出现小污点和嫌弃表情。</div></div>
-                    <div class="tab-content" id="tab-dress" role="tabpanel"><div class="action-grid three">${OUTFITS.map(x => actionCard(x,'dress')).join('')}</div><div class="tip-line">换装会提升心情，每套服装都有独立的小配饰。</div></div>
-                    <div class="pet-footer"><span>♡ 今日照顾次数：<b id="care-count">${getCareCount()}</b></span><span>Auto-save · Local</span></div>
-                </div>
-            </div>`;
-        document.body.appendChild(host);
-        bindEvents(host);
+                </div>`;
+            document.body.appendChild(host);
+            bindEvents(host);
+        }
+        ensureLauncher();
         updatePanel();
+    }
+
+    function ensureLauncher() {
+        let fab = document.getElementById('st-pixel-pet-fab');
+        if (fab) {
+            fab.style.setProperty('display', 'flex', 'important');
+            fab.style.setProperty('visibility', 'visible', 'important');
+            fab.style.setProperty('opacity', '1', 'important');
+            fab.style.setProperty('pointer-events', 'auto', 'important');
+            return fab;
+        }
+        fab = document.createElement('button');
+        fab.id = 'st-pixel-pet-fab';
+        fab.type = 'button';
+        fab.className = 'pixel-pet-fab';
+        fab.setAttribute('aria-label', '打开电子宠物');
+        fab.setAttribute('aria-expanded', 'false');
+        fab.title = '打开电子宠物';
+        fab.innerHTML = '<span class="paw-pad"></span><span class="paw-toe t1"></span><span class="paw-toe t2"></span><span class="paw-toe t3"></span><span class="paw-toe t4"></span>';
+        // Critical inline fallback: the button remains visible even if a theme/plugin overrides CSS.
+        fab.style.cssText += ';position:fixed!important;right:18px!important;bottom:18px!important;left:auto!important;top:auto!important;width:58px!important;height:58px!important;display:flex!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;z-index:2147483647!important;margin:0!important;padding:0!important;';
+        document.body.appendChild(fab);
+        fab.addEventListener('click', () => togglePanel());
+        return fab;
     }
 
     function bindEvents(host) {
@@ -235,7 +260,6 @@
             else if (action === 'reset') resetPet();
         });
 
-        host.querySelector('#st-pixel-pet-fab')?.addEventListener('click', () => togglePanel());
 
         if (!keydownBound) {
             document.addEventListener('keydown', event => {
@@ -400,54 +424,62 @@
 
     function ensureHost() {
         if (!document.body) return false;
-        if (!document.getElementById('st-pixel-pet-root')) {
-            buildPanel();
-        }
-        return !!document.getElementById('st-pixel-pet-root');
+        buildPanel();
+        ensureLauncher();
+        return !!document.getElementById('st-pixel-pet-fab');
     }
 
-    function init() {
-        if (!ensureHost()) {
-            window.setTimeout(init, 150);
+    function initInternal() {
+        if (!document.body) {
+            window.setTimeout(initInternal, 100);
             return;
         }
-        if (initialized) {
-            updatePanel(false);
-            return;
+        try {
+            ensureHost();
+            applyDecay();
+            startTicker();
+            if (!initialized) {
+                initialized = true;
+                console.info(`${EXT_NAME} v${VERSION} initialized`);
+            }
+        } catch (error) {
+            console.error(`${EXT_NAME} initialization failed`, error);
+            window.setTimeout(initInternal, 500);
         }
-        initialized = true;
-        applyDecay();
-        startTicker();
-        console.info(`${EXT_NAME} v${VERSION} initialized`);
     }
 
-    // Third-party extensions are self-initializing. Do not depend on manifest hooks.
-    function scheduleInit() {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init, { once: true });
-        } else {
-            init();
-        }
-        if (window.jQuery) {
-            window.jQuery(init);
-        }
+    // Match the reference project's proven third-party pattern: plain JS manifest,
+    // self-initialization after DOM readiness, and a body-level fixed launcher.
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initInternal, { once: true });
+    } else {
+        initInternal();
     }
+    if (window.jQuery) window.jQuery(initInternal);
 
     window.addEventListener('pagehide', () => {
         saveState();
         stopTicker();
     });
 
-    // Recreate the floating layer if a host UI rerender removes it.
-    function watchBody() {
-        if (!document.body || typeof MutationObserver === 'undefined') return;
-        const observer = new MutationObserver(() => {
-            if (!document.getElementById('st-pixel-pet-root')) init();
-        });
-        observer.observe(document.body, { childList: true });
+    if (typeof MutationObserver !== 'undefined') {
+        let observeTimer = null;
+        const observeBody = () => {
+            if (!document.body) return;
+            const observer = new MutationObserver(() => {
+                if (observeTimer) return;
+                observeTimer = window.setTimeout(() => {
+                    observeTimer = null;
+                    if (!document.getElementById('st-pixel-pet-fab') || !document.getElementById('st-pixel-pet-root')) initInternal();
+                }, 50);
+            });
+            observer.observe(document.body, { childList: true });
+        };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', observeBody, { once: true });
+        else observeBody();
     }
 
-    window.SillyPet = Object.freeze({ version: VERSION, init, open: () => togglePanel(true), close: () => togglePanel(false) });
+    window.SillyPet = Object.freeze({ version: VERSION, init: initInternal, open: () => togglePanel(true), close: () => togglePanel(false) });
     scheduleInit();
     if (document.readyState === 'loading') {
         window.addEventListener('DOMContentLoaded', watchBody, { once: true });
