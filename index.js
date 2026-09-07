@@ -4,12 +4,10 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '3.0.0';
+    const VERSION = '3.3.0';
 
     const PETS = {
-        bunny: { id: 'bunny', name: '白兔团子', color: '#f7f7fb', shadow: '#c9cad5', eye: '#413b4d', blush: '#f0a4ad' },
-        cat: { id: 'cat', name: '黑猫团子', color: '#2b2a31', shadow: '#16161b', eye: '#ffd66e', blush: '#a86169' },
-        dog: { id: 'dog', name: '灰狗团子', color: '#9197a2', shadow: '#646b78', eye: '#27313a', blush: '#cc9398' },
+        cat: { id: 'cat', name: '黑猫团子', color: '#27233a', shadow: '#16161b', eye: '#ffd66e', blush: '#a86169' },
     };
 
     const FOODS = [
@@ -53,10 +51,10 @@
     let keydownBound = false;
 
     function defaults() {
-        return { petId: 'bunny', name: '小团子', mood: 80, clean: 85, fullness: 74, bornAt: Date.now(), lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
+        return { petId: 'cat', name: '小黑团', mood: 80, clean: 85, fullness: 74, bornAt: Date.now(), lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
     }
     function loadState() {
-        try { const raw = localStorage.getItem(STORAGE_KEY); const merged = { ...defaults(), ...(raw ? JSON.parse(raw) : {}) }; if (!merged.bornAt) merged.bornAt = Date.now(); return merged; }
+        try { const raw = localStorage.getItem(STORAGE_KEY); const merged = { ...defaults(), ...(raw ? JSON.parse(raw) : {}) }; if (!merged.bornAt) merged.bornAt = Date.now(); merged.petId = 'cat'; if (!merged.name || merged.name === '小团子') merged.name = '小黑团'; return merged; }
         catch (error) { console.warn(`${EXT_NAME} state load failed`, error); return defaults(); }
     }
     function saveState() { state.lastTick = Date.now(); try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {} }
@@ -147,9 +145,7 @@
                     <div class="info-strip">
                         <button class="pet-info-pill" data-action="rename"><span class="pill-icon">♥</span><span><b id="info-name">${escapeHtml(state.name)}</b><small>名字</small></span><span class="pill-edit">✎</span></button>
                         <div class="pet-info-pill pet-switcher"><span class="switch-title">伙伴</span><div class="pet-choice-row">
-                            <button type="button" class="pet-choice" data-action="select-pet" data-id="bunny"><span class="pet-choice-dot bunny-dot"></span><span>兔</span></button>
-                            <button type="button" class="pet-choice" data-action="select-pet" data-id="cat"><span class="pet-choice-dot cat-dot"></span><span>猫</span></button>
-                            <button type="button" class="pet-choice" data-action="select-pet" data-id="dog"><span class="pet-choice-dot dog-dot"></span><span>狗</span></button>
+                            <button type="button" class="pet-choice active" data-action="select-pet" data-id="cat"><span class="pet-choice-dot cat-dot"></span><span>黑猫</span></button>
                         </div></div>
                         <div class="pet-info-pill stats-pill"><div class="mini-stat"><span>♥</span><strong id="mini-mood">${Math.round(state.mood)}</strong></div><div class="mini-stat"><span>✦</span><strong id="mini-clean">${Math.round(state.clean)}</strong></div><div class="mini-stat"><span>◒</span><strong id="mini-fullness">${Math.round(state.fullness)}</strong></div></div>
                     </div>

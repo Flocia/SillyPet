@@ -1,5 +1,6 @@
 # Changelog
 
-## 3.1.2
-- 修复宠物不可见：为当前 `pixel-sprite-wrap` DOM 补齐 12px box-shadow 像素精灵渲染。
-- 保留 Tamagotchi 视觉 CSS。
+## 3.3.0
+- 保留 v3.2.0 UI 与布局
+- 使用 v3.1.2 黑猫参考像素外形
+- 仅保留黑猫宠物
