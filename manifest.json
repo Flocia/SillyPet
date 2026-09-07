@@ -1,13 +1,13 @@
 {
-  "display_name": "SillyPet · 团子拓麻歌子",
+  "display_name": "SillyPet · 团子电子宠物",
   "loading_order": 80,
   "requires": [],
   "optional": [],
+  "dependencies": [],
   "js": "index.js",
   "css": "style.css",
   "author": "Flocia",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "homePage": "https://github.com/Flocia/SillyPet",
-  "auto_update": true,
-  "description": "团子形态的 Tamagotchi 风格 SillyTavern 电子宠物小游戏"
+  "auto_update": true
 }

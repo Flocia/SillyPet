@@ -1,17 +1,13 @@
-# SillyPet · 团子拓麻歌子
+# SillyPet · 团子电子宠物
 
-SillyTavern 第三方电子宠物扩展。三种团子宠物（白兔、黑猫、灰狗）拥有心情、清洁、饱肚三项属性，并支持喂食、洗澡和换装。
+SillyTavern third-party extension. Mobile-friendly virtual pet with three round dango animals.
 
-## GitHub 安装
+## 2.2.0
+- Pets are pure sphere/dango shapes: no legs or arms, only species-specific ears and tails.
+- Removed the outfit/dressing system completely from the visible interface.
+- Added three play actions with dedicated visual animations: pet the head, play ball, jump rope.
+- Mood, cleanliness, and fullness still decay over time and respond to care/play.
+- Kept the body-level floating paw launcher and local persistence.
 
-将本仓库作为 Git Repository 安装：
-
-`https://github.com/Flocia/SillyPet`
-
-仓库根目录需要直接包含 `manifest.json`、`index.js`、`style.css`。
-
-## v2.1.0
-
-- 团子化宠物外形。
-- 衣服采用贴合身体的衣身/领口/袖子/下摆/配饰结构。
-- 移动端安全区与触控优化。
+## Install
+Upload `manifest.json`, `index.js`, `style.css`, `README.md`, and `CHANGELOG.md` to the repository root and install the GitHub repository URL from SillyTavern.

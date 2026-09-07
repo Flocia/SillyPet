@@ -1,7 +1,7 @@
 # Changelog
 
-## 2.1.0
-- 三种宠物改为更圆润的“团子”体型：白兔团子、黑猫团子、灰狗团子。
-- 重做宠物五官、高光、腮红、四只小爪、耳朵和尾巴比例。
-- 六套服装改为“穿着式”结构：衣领、袖口、衣身、下摆、配饰分开绘制，保留露出的身体/爪子，不再像整张图片盖上去。
-- 保留安卓平板触控和悬浮猫爪入口。
+## 2.2.0
+- Redesigned all animals as round dango/sphere pets.
+- Removed limbs and the outfit/dressing feature.
+- Added petting, ball, and jump-rope interactions with unique action animations.
+- Updated state effects and mobile presentation for the new interaction-focused design.
