@@ -5,7 +5,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v11';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '1.5.0';
+    const VERSION = '2.1.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔子', subtitle: '软乎乎 · 喜欢胡萝卜', color: '#f8f8fb', shadow: '#cfcfd9', eye: '#463b53', blush: '#f3a4ad' },
@@ -143,11 +143,16 @@
 
         return `<div class="${classes}" style="--pet-main:${pet.color};--pet-shadow:${pet.shadow};--pet-eye:${pet.eye};--pet-blush:${pet.blush};">
             <div class="pixel-spark s1"></div><div class="pixel-spark s2"></div><div class="pixel-spark s3"></div>
-            <div class="pet-shadow"></div><div class="tail"></div><div class="body"></div>
-            <div class="leg l1"></div><div class="leg l2"></div><div class="leg l3"></div><div class="leg l4"></div>
+            <div class="pet-shadow"></div><div class="tail"></div>
+            <div class="dango-body">
+                <div class="belly-patch"></div>
+                <div class="paw p1"></div><div class="paw p2"></div>
+                <div class="paw p3"></div><div class="paw p4"></div>
+            </div>
             <div class="ear e1"></div><div class="ear e2"></div>
-            <div class="head"><div class="shine"></div><div class="face-eyes">${face.eyes}</div><div class="face-mouth">${face.mouth}</div><div class="blush b1"></div><div class="blush b2"></div></div>
-            <div class="outfit-layer"></div><div class="accessory-layer"></div>
+            <div class="dango-head"><div class="shine"></div><div class="face-eyes">${face.eyes}</div><div class="face-mouth">${face.mouth}</div><div class="blush b1"></div><div class="blush b2"></div></div>
+            <div class="outfit-layer"><div class="garment-collar"></div><div class="garment-sleeve left"></div><div class="garment-sleeve right"></div><div class="garment-trim"></div></div>
+            <div class="accessory-layer"></div>
             <div class="dirty-bubbles"><i></i><i></i><i></i></div>
             <div class="tear-drop t1"></div><div class="tear-drop t2"></div>
             <div class="heart-pop">♥</div><div class="hunger-pop">zzz…</div>
