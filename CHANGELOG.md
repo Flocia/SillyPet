@@ -1,7 +1,7 @@
 # Changelog
 
-## 3.3.1
-- 保留 v3.2.0 UI 与布局
-- 仅保留黑猫
-- 使用 v3.1.2 黑猫 box-shadow 像素精灵
-- 强化可见性与移动端定位
+## 3.3.2
+- Replaced the black cat with the supplied white rabbit pixel artwork.
+- Kept the existing v3.2 UI/layout and launcher.
+- Rabbit is now the only selectable pet.
+- Added crisp NEAREST/pixel rendering and mobile scaling.

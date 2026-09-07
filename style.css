@@ -1699,3 +1699,35 @@
 @keyframes pp-cat-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media(max-width:760px){#st-pixel-pet-root .pet-art-wrap{transform:translateX(-50%) scale(.9)!important;transform-origin:50% 100%!important;bottom:42px!important}}
 @media(max-width:440px){#st-pixel-pet-root .pet-art-wrap{transform:translateX(-50%) scale(.78)!important;bottom:35px!important}}
+
+/* v3.3.2 rabbit sprite: uses the uploaded reference artwork directly. */
+.pixel-sprite-wrap.pixel-bunny-ref{
+  position:absolute!important;
+  inset:0!important;
+  display:grid!important;
+  place-items:end center!important;
+  pointer-events:none!important;
+  z-index:6!important;
+}
+.pixel-rabbit-image{
+  display:block!important;
+  width:250px!important;
+  height:auto!important;
+  max-width:none!important;
+  image-rendering:pixelated!important;
+  image-rendering:crisp-edges!important;
+  filter:drop-shadow(0 5px 0 rgba(69,40,34,.18))!important;
+  user-select:none!important;
+  -webkit-user-drag:none!important;
+}
+.pet-avatar.pet-bunny .pixel-rabbit-image{animation:pp-rabbit-breathe 2.4s steps(2,end) infinite;}
+@keyframes pp-rabbit-breathe{
+  0%,100%{transform:translateY(0) scale(1,1)}
+  50%{transform:translateY(-4px) scale(1.015,.985)}
+}
+@media (max-width:760px){
+  .pixel-rabbit-image{width:215px!important;}
+}
+@media (max-width:440px){
+  .pixel-rabbit-image{width:180px!important;}
+}

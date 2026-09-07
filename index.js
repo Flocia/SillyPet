@@ -4,10 +4,10 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '3.3.0';
+    const VERSION = '3.3.2';
 
     const PETS = {
-        cat: { id: 'cat', name: '黑猫团子', color: '#27233a', shadow: '#16161b', eye: '#ffd66e', blush: '#a86169' },
+        bunny: { id: 'bunny', name: '白兔团子', color: '#ffffff', shadow: '#a26f72', eye: '#452822', blush: '#f39fa9' },
     };
 
     const FOODS = [
@@ -51,11 +51,20 @@
     let keydownBound = false;
 
     function defaults() {
-        return { petId: 'cat', name: '小黑团', mood: 80, clean: 85, fullness: 74, bornAt: Date.now(), lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
+        return { petId: 'bunny', name: '小白兔', mood: 80, clean: 85, fullness: 74, bornAt: Date.now(), lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
     }
     function loadState() {
-        try { const raw = localStorage.getItem(STORAGE_KEY); const merged = { ...defaults(), ...(raw ? JSON.parse(raw) : {}) }; if (!merged.bornAt) merged.bornAt = Date.now(); merged.petId = 'cat'; if (!merged.name || merged.name === '小团子') merged.name = '小黑团'; return merged; }
-        catch (error) { console.warn(`${EXT_NAME} state load failed`, error); return defaults(); }
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            const merged = { ...defaults(), ...(raw ? JSON.parse(raw) : {}) };
+            if (!merged.bornAt) merged.bornAt = Date.now();
+            merged.petId = 'bunny';
+            if (!merged.name || merged.name === '小黑团' || merged.name === '小团子') merged.name = '小白兔';
+            return merged;
+        } catch (error) {
+            console.warn(`${EXT_NAME} state load failed`, error);
+            return defaults();
+        }
     }
     function saveState() { state.lastTick = Date.now(); try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {} }
     function clamp(value) { return Math.max(0, Math.min(100, Math.round(value * 10) / 10)); }
@@ -89,8 +98,7 @@
 
     // Reference-style pixel mascots: hand-authored 12px box-shadow sprites.
     function petSvgHtml(pet) {
-        const cls = pet.id === 'bunny' ? 'pixel-bunny-ref' : pet.id === 'cat' ? 'pixel-cat-ref' : 'pixel-dog-ref';
-        return `<div class="pixel-sprite-wrap ${cls}" role="img" aria-label="${escapeHtml(pet.name)}"><span class="pixel-sprite-core"></span></div>`;
+        return `<div class="pixel-sprite-wrap pixel-bunny-ref" role="img" aria-label="${escapeHtml(pet.name)}"><img class="pixel-rabbit-image" src="./rabbit.png" alt="${escapeHtml(pet.name)}" draggable="false"></div>`;
     }
 
     function petArtHtml() {
@@ -145,7 +153,7 @@
                     <div class="info-strip">
                         <button class="pet-info-pill" data-action="rename"><span class="pill-icon">♥</span><span><b id="info-name">${escapeHtml(state.name)}</b><small>名字</small></span><span class="pill-edit">✎</span></button>
                         <div class="pet-info-pill pet-switcher"><span class="switch-title">伙伴</span><div class="pet-choice-row">
-                            <button type="button" class="pet-choice active" data-action="select-pet" data-id="cat"><span class="pet-choice-dot cat-dot"></span><span>黑猫</span></button>
+                            <button type="button" class="pet-choice active" data-action="select-pet" data-id="bunny"><span class="pet-choice-dot bunny-dot"></span><span>白兔</span></button>
                         </div></div>
                         <div class="pet-info-pill stats-pill"><div class="mini-stat"><span>♥</span><strong id="mini-mood">${Math.round(state.mood)}</strong></div><div class="mini-stat"><span>✦</span><strong id="mini-clean">${Math.round(state.clean)}</strong></div><div class="mini-stat"><span>◒</span><strong id="mini-fullness">${Math.round(state.fullness)}</strong></div></div>
                     </div>
@@ -234,8 +242,8 @@
     function switchTab(tab){document.querySelectorAll('#st-pixel-pet-root .pet-tab').forEach(item=>item.classList.toggle('active',item.dataset.tab===tab));document.querySelectorAll('#st-pixel-pet-root .tab-content').forEach(item=>item.classList.toggle('active',item.id===`tab-${tab}`));}
     function ensureFresh(){applyDecay();}
     function selectPet(id){if(!PETS[id])return;ensureFresh();state.petId=id;state.mood=clamp(state.mood+rand(2,6));state.lastAction=`遇见了 ${PETS[id].name}！`;state.lastActionType='pet';saveState();recordCare();updatePanel(true);playFx('select');}
-    function doFeed(id){ensureFresh();const food=FOODS.find(x=>x.id===id);if(!food)return;const amount=rand(food.gain[0],food.gain[1]),moodGain=rand(4,9);state.fullness=clamp(state.fullness+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.feed[state.petId])} 饱肚 +${amount} / 心情 +${moodGain}`;state.lastActionType='feed';saveState();recordCare();updatePanel(true);playFx('feed');}
-    function doBath(id){ensureFresh();const tool=TOOLS.find(x=>x.id===id);if(!tool)return;const amount=rand(tool.gain[0],tool.gain[1]),moodGain=rand(5,11);state.clean=clamp(state.clean+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.bath)} 清洁 +${amount} / 心情 +${moodGain}`;state.lastActionType='bath';saveState();recordCare();updatePanel(true);playBathFx(id);}
+    function doFeed(id){ensureFresh();const food=FOODS.find(x=>x.id===id);if(!food)return;const amount=rand(food.gain[0],food.gain[1]),moodGain=rand(4,9);state.fullness=clamp(state.fullness+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS.bunny.name} ${pick(ACTION_LINES.feed[state.petId])} 饱肚 +${amount} / 心情 +${moodGain}`;state.lastActionType='feed';saveState();recordCare();updatePanel(true);playFx('feed');}
+    function doBath(id){ensureFresh();const tool=TOOLS.find(x=>x.id===id);if(!tool)return;const amount=rand(tool.gain[0],tool.gain[1]),moodGain=rand(5,11);state.clean=clamp(state.clean+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS.bunny.name} ${pick(ACTION_LINES.bath)} 清洁 +${amount} / 心情 +${moodGain}`;state.lastActionType='bath';saveState();recordCare();updatePanel(true);playBathFx(id);}
     function playBathFx(toolId){
         const root=document.getElementById('st-pixel-pet-root');
         const art=root?.querySelector('.pet-avatar');
@@ -257,7 +265,7 @@
         state.mood=clamp(state.mood+moodGain);
         state.clean=clamp(state.clean-rand(0,1));
         state.fullness=clamp(state.fullness-rand(0,1));
-        state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play.bounce)} 心情 +${moodGain}`;
+        state.lastAction=`${PETS.bunny.name} ${pick(ACTION_LINES.play.bounce)} 心情 +${moodGain}`;
         state.lastActionType='bounce';
         saveState();recordCare();
         host.classList.remove('pet-bounce-ready');
@@ -373,7 +381,7 @@
         state.mood=clamp(state.mood+moodGain);
         state.clean=clamp(state.clean-rand(0,2));
         state.fullness=clamp(state.fullness-rand(0,1));
-        state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play.catch)} 心情 +${moodGain}`;
+        state.lastAction=`${PETS.bunny.name} ${pick(ACTION_LINES.play.catch)} 心情 +${moodGain}`;
         state.lastActionType='catch';
         saveState();recordCare();
         host.classList.add('fx-catch');
@@ -407,7 +415,7 @@
         if(id==='pat'){
             const moodGain=rand(6,13);
             state.mood=clamp(state.mood+moodGain);
-            state.lastAction=`${PETS[state.petId].name} 被轻轻摸摸头啦～ 心情 +${moodGain}`;
+            state.lastAction=`${PETS.bunny.name} 被轻轻摸摸头啦～ 心情 +${moodGain}`;
             state.lastActionType='pat';
             saveState();recordCare();updatePanel(true);playFx('pat');
             return;
