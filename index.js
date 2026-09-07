@@ -4,7 +4,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '2.7.0';
+    const VERSION = '2.9.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔团子', color: '#f7f7fb', shadow: '#c9cad5', eye: '#413b4d', blush: '#f0a4ad' },
@@ -93,85 +93,104 @@
     // oversized sparkling eyes, compact lower body, bold pixel outline, tiny facial features.
     function petSvgHtml(pet) {
         const common = `shape-rendering="crispEdges" viewBox="0 0 160 190" role="img" aria-label="${escapeHtml(pet.name)}"`;
-        const outline = '#2f2940';
-        const white = '#fff8f4';
+        const ink = '#2b2640';
+        const white = '#fffaf8';
         if (pet.id === 'bunny') {
             return `<svg class="pet-sprite pet-sprite-bunny" ${common}>
                 <g>
-                    <polygon fill="${outline}" points="39,55 29,45 29,17 38,8 47,10 53,31 63,28 70,10 79,7 88,12 89,44 79,55 73,48 49,48"/>
-                    <polygon fill="#f8e4eb" points="36,43 34,19 39,14 43,17 48,40 46,47"/>
-                    <polygon fill="#f8e4eb" points="73,43 77,18 82,14 85,18 84,43 78,48"/>
-                    <polygon fill="${outline}" points="30,72 38,58 52,49 79,49 95,58 105,73 107,97 101,116 90,129 75,135 51,133 36,124 27,109 24,90"/>
-                    <polygon fill="#f7f6f8" points="35,72 43,60 54,55 77,55 91,62 100,75 102,94 96,109 86,121 73,126 53,124 41,117 33,104 30,89"/>
-                    <polygon fill="#ffffff" points="44,63 56,58 74,58 84,62 77,68 53,68" opacity=".6"/>
-                    <rect x="43" y="78" width="21" height="24" fill="#403557"/>
-                    <rect x="96" y="78" width="21" height="24" fill="#403557"/>
-                    <rect x="47" y="80" width="8" height="8" fill="#ffffff"/>
-                    <rect x="100" y="80" width="8" height="8" fill="#ffffff"/>
-                    <rect x="54" y="92" width="4" height="4" fill="#c7d4ff"/>
-                    <rect x="107" y="92" width="4" height="4" fill="#c7d4ff"/>
-                    <rect x="35" y="101" width="12" height="6" fill="#ef9bb2" opacity=".9"/>
-                    <rect x="113" y="101" width="12" height="6" fill="#ef9bb2" opacity=".9"/>
-                    <rect x="72" y="101" width="6" height="5" fill="#42334a"/>
-                    <rect x="66" y="106" width="18" height="5" fill="#42334a"/>
-                    <rect x="72" y="111" width="6" height="3" fill="#42334a"/>
-                    <polygon fill="${outline}" points="53,125 69,130 88,126 97,134 92,157 83,169 70,174 52,171 41,160 39,140"/>
-                    <polygon fill="#ececf3" points="57,128 71,133 84,130 91,136 87,153 80,162 69,166 55,163 47,155 46,141"/>
-                    <polygon fill="#f1a6b8" points="38,140 45,135 49,145 45,154 39,151"/>
-                    <polygon fill="#f1a6b8" points="91,137 98,141 95,152 89,154 87,145"/>
-                    <polygon fill="${outline}" points="96,126 112,124 125,130 126,144 118,151 108,147 101,140"/>
-                    <polygon fill="#f7f6f8" points="104,130 114,129 121,134 120,142 114,145 108,141"/>
-                    <rect x="29" y="157" width="24" height="7" fill="#c8c8d4" opacity=".7"/>
+                    <!-- ears -->
+                    <polygon fill="${ink}" points="38,46 30,42 28,18 35,8 45,10 51,30 48,45"/>
+                    <polygon fill="#f7d8df" points="36,39 34,19 38,13 42,15 46,37 44,41"/>
+                    <polygon fill="${ink}" points="77,44 80,27 88,9 98,8 104,18 101,43 94,50"/>
+                    <polygon fill="#f7d8df" points="84,39 89,18 95,13 99,18 97,39 92,45"/>
+                    <!-- body / big head silhouette -->
+                    <polygon fill="${ink}" points="40,58 55,49 80,47 101,53 116,67 123,88 120,110 110,125 95,134 63,133 46,126 34,114 29,94 31,75"/>
+                    <polygon fill="${white}" points="45,62 58,55 81,53 98,58 109,69 115,88 112,106 103,118 90,125 66,124 51,118 42,107 37,91 39,76"/>
+                    <!-- tiny body -->
+                    <polygon fill="${ink}" points="55,123 72,128 91,124 101,132 96,155 88,167 71,171 57,167 48,156 45,137"/>
+                    <polygon fill="#efeef4" points="60,128 72,132 86,129 93,135 89,151 82,160 71,164 60,160 54,152 52,139"/>
+                    <!-- eyes -->
+                    <rect x="47" y="80" width="24" height="25" fill="#352f4b"/>
+                    <rect x="88" y="80" width="24" height="25" fill="#352f4b"/>
+                    <rect x="51" y="82" width="9" height="9" fill="#fff"/>
+                    <rect x="92" y="82" width="9" height="9" fill="#fff"/>
+                    <rect x="59" y="95" width="4" height="5" fill="#c3d7ff"/>
+                    <rect x="100" y="95" width="4" height="5" fill="#c3d7ff"/>
+                    <!-- cheeks -->
+                    <rect x="40" y="102" width="15" height="7" fill="#efa3b3"/>
+                    <rect x="105" y="102" width="15" height="7" fill="#efa3b3"/>
+                    <!-- mouth -->
+                    <rect x="76" y="104" width="7" height="5" fill="#4b3949"/>
+                    <rect x="69" y="109" width="21" height="5" fill="#4b3949"/>
+                    <rect x="76" y="114" width="7" height="3" fill="#4b3949"/>
+                    <!-- tiny tail -->
+                    <rect x="113" y="120" width="10" height="10" fill="#f7f7fb"/>
+                    <rect x="120" y="116" width="11" height="10" fill="#f7f7fb"/>
+                    <rect x="126" y="120" width="7" height="7" fill="${ink}"/>
                 </g>
             </svg>`;
         }
         if (pet.id === 'cat') {
             return `<svg class="pet-sprite pet-sprite-cat" ${common}>
                 <g>
-                    <polygon fill="${outline}" points="31,52 31,23 39,13 55,28 71,21 88,13 104,22 107,52 98,60 43,60"/>
-                    <polygon fill="#302e38" points="38,47 38,26 42,21 54,33 68,27 89,19 99,25 100,47 91,55 47,55"/>
-                    <polygon fill="${outline}" points="27,69 38,57 51,50 78,49 96,56 108,69 111,93 106,113 96,127 83,135 55,134 40,126 29,113 24,94"/>
-                    <polygon fill="#3b3a43" points="33,71 43,61 53,56 76,55 91,61 101,72 104,91 100,107 91,118 79,126 58,127 45,120 36,109 31,94"/>
-                    <polygon fill="#514f59" points="45,61 56,57 72,57 82,62 75,68 54,68" opacity=".65"/>
-                    <rect x="41" y="78" width="22" height="24" fill="#f4d47a"/>
-                    <rect x="84" y="78" width="22" height="24" fill="#f4d47a"/>
-                    <rect x="45" y="79" width="7" height="8" fill="#fffdf1"/>
-                    <rect x="88" y="79" width="7" height="8" fill="#fffdf1"/>
-                    <rect x="56" y="89" width="4" height="8" fill="#292530"/>
-                    <rect x="99" y="89" width="4" height="8" fill="#292530"/>
-                    <rect x="35" y="102" width="12" height="6" fill="#a96570"/>
-                    <rect x="109" y="102" width="12" height="6" fill="#a96570"/>
-                    <rect x="71" y="103" width="7" height="5" fill="#f2bcc8"/>
-                    <rect x="65" y="108" width="19" height="5" fill="#f2bcc8"/>
-                    <rect x="72" y="113" width="6" height="3" fill="#f2bcc8"/>
-                    <polygon fill="${outline}" points="56,126 70,131 87,127 97,136 92,158 83,171 67,175 52,171 42,160 40,141"/>
-                    <polygon fill="#46454f" points="59,129 70,134 83,131 90,138 86,154 78,164 67,167 55,163 48,154 47,142"/>
-                    <polygon fill="#6f626d" points="102,126 116,121 128,126 131,137 124,143 112,140 106,135"/>
-                    <polygon fill="#6b5963" points="107,128 116,125 123,129 125,136 118,138 111,135"/>
+                    <!-- cat ears -->
+                    <polygon fill="${ink}" points="35,52 31,27 40,13 58,28 64,50"/>
+                    <polygon fill="#47404f" points="40,42 38,27 41,21 53,31 55,43"/>
+                    <polygon fill="${ink}" points="95,49 102,28 119,13 128,27 124,53"/>
+                    <polygon fill="#47404f" points="104,42 109,31 119,20 122,27 119,43"/>
+                    <!-- head -->
+                    <polygon fill="${ink}" points="43,58 59,50 91,49 108,57 121,72 125,93 120,112 109,125 94,133 64,133 49,126 38,113 33,94 36,74"/>
+                    <polygon fill="#3d3a44" points="48,62 61,56 90,55 104,62 114,73 118,91 114,106 104,117 91,124 66,124 54,119 45,108 40,93 43,76"/>
+                    <!-- tiny body -->
+                    <polygon fill="${ink}" points="56,124 71,129 89,125 99,134 94,156 86,168 70,171 55,167 47,156 45,137"/>
+                    <polygon fill="#49464f" points="61,128 71,133 85,130 91,136 87,151 80,160 70,164 59,160 53,152 52,139"/>
+                    <!-- eyes -->
+                    <rect x="47" y="80" width="24" height="25" fill="#f1d56c"/>
+                    <rect x="88" y="80" width="24" height="25" fill="#f1d56c"/>
+                    <rect x="51" y="82" width="9" height="9" fill="#fffef5"/>
+                    <rect x="92" y="82" width="9" height="9" fill="#fffef5"/>
+                    <rect x="59" y="91" width="4" height="10" fill="#2a2330"/>
+                    <rect x="100" y="91" width="4" height="10" fill="#2a2330"/>
+                    <!-- cheeks + mouth -->
+                    <rect x="40" y="102" width="15" height="7" fill="#a6616b"/>
+                    <rect x="105" y="102" width="15" height="7" fill="#a6616b"/>
+                    <rect x="76" y="104" width="7" height="5" fill="#e9b4bd"/>
+                    <rect x="69" y="109" width="21" height="5" fill="#e9b4bd"/>
+                    <rect x="76" y="114" width="7" height="3" fill="#e9b4bd"/>
+                    <!-- tail -->
+                    <polygon fill="${ink}" points="110,121 124,116 134,121 138,132 131,141 121,140 118,132"/>
+                    <polygon fill="#3d3a44" points="117,124 125,121 131,124 133,131 128,136 122,135 121,130"/>
                 </g>
             </svg>`;
         }
         return `<svg class="pet-sprite pet-sprite-dog" ${common}>
             <g>
-                <polygon fill="${outline}" points="31,58 28,38 31,24 43,16 58,29 74,23 92,16 106,23 111,39 107,60 98,67 42,67"/>
-                <polygon fill="#6f7681" points="37,55 35,39 38,29 44,24 56,36 70,31 88,24 100,29 105,40 103,56 95,61 45,61"/>
-                <polygon fill="${outline}" points="31,74 40,62 54,54 81,54 98,61 111,75 113,98 108,116 98,130 85,137 57,135 42,129 30,116 25,98"/>
-                <polygon fill="#949aa4" points="37,76 45,67 56,60 78,60 91,66 102,77 106,95 101,110 92,120 81,127 59,126 47,121 38,111 32,97"/>
-                <polygon fill="#b8bdc5" points="47,67 57,62 74,62 84,67 78,73 55,73" opacity=".75"/>
-                <rect x="42" y="80" width="21" height="23" fill="#333b48"/>
-                <rect x="86" y="80" width="21" height="23" fill="#333b48"/>
-                <rect x="46" y="81" width="8" height="8" fill="#ffffff"/>
-                <rect x="90" y="81" width="8" height="8" fill="#ffffff"/>
-                <rect x="38" y="103" width="12" height="6" fill="#d4939d"/>
-                <rect x="111" y="103" width="12" height="6" fill="#d4939d"/>
-                <rect x="68" y="99" width="24" height="21" fill="#d7d9dd"/>
-                <rect x="74" y="97" width="12" height="11" fill="#2e3440"/>
-                <rect x="71" y="108" width="18" height="5" fill="#2e3440"/>
-                <rect x="77" y="113" width="6" height="3" fill="#2e3440"/>
-                <polygon fill="${outline}" points="54,128 70,132 87,127 98,136 93,158 85,170 69,175 54,171 43,161 41,141"/>
-                <polygon fill="#8b919b" points="59,130 70,135 83,131 91,138 87,153 79,163 69,167 57,163 49,155 48,142"/>
-                <polygon fill="${outline}" points="33,118 25,123 22,136 30,142 42,136 43,126"/>
-                <polygon fill="#8f96a0" points="31,123 27,127 26,134 31,137 38,133 39,128"/>
+                <!-- floppy ears -->
+                <polygon fill="${ink}" points="37,57 26,69 24,94 30,112 42,118 49,108 50,83 47,65"/>
+                <polygon fill="#747b86" points="37,64 31,74 30,93 34,105 41,109 43,101 43,81 41,69"/>
+                <polygon fill="${ink}" points="112,57 123,68 127,91 122,111 111,119 104,108 104,84 107,65"/>
+                <polygon fill="#747b86" points="114,64 120,73 121,91 118,104 112,109 110,101 110,81 111,68"/>
+                <!-- head -->
+                <polygon fill="${ink}" points="43,59 58,50 90,49 107,56 119,71 124,92 120,111 108,125 93,133 63,132 48,126 37,113 33,94 36,74"/>
+                <polygon fill="#9ba0a8" points="48,63 60,56 89,55 103,61 112,73 117,91 113,107 103,118 90,124 65,123 53,118 45,108 40,93 43,77"/>
+                <!-- tiny body -->
+                <polygon fill="${ink}" points="56,123 72,128 89,124 99,133 94,155 86,168 70,171 55,167 47,156 45,137"/>
+                <polygon fill="#858b95" points="61,128 71,133 85,130 91,136 87,151 80,160 70,164 59,160 53,152 52,139"/>
+                <!-- muzzle patch -->
+                <rect x="67" y="96" width="20" height="21" fill="#d4d3d0"/>
+                <rect x="74" y="96" width="12" height="10" fill="#2f343e"/>
+                <rect x="70" y="107" width="20" height="5" fill="#2f343e"/>
+                <!-- eyes -->
+                <rect x="48" y="78" width="20" height="22" fill="#2f343e"/>
+                <rect x="91" y="78" width="20" height="22" fill="#2f343e"/>
+                <rect x="52" y="80" width="8" height="8" fill="#fff"/>
+                <rect x="95" y="80" width="8" height="8" fill="#fff"/>
+                <!-- cheeks -->
+                <rect x="40" y="100" width="14" height="7" fill="#d4939d"/>
+                <rect x="106" y="100" width="14" height="7" fill="#d4939d"/>
+                <!-- tail -->
+                <polygon fill="${ink}" points="108,123 122,119 131,123 134,132 128,140 119,140 115,134"/>
+                <polygon fill="#8e949e" points="115,125 122,123 127,126 129,131 125,135 120,135 118,131"/>
             </g>
         </svg>`;
     }
@@ -227,7 +246,11 @@
 
                     <div class="info-strip">
                         <button class="pet-info-pill" data-action="rename"><span class="pill-icon">♥</span><span><b id="info-name">${escapeHtml(state.name)}</b><small>名字</small></span><span class="pill-edit">✎</span></button>
-                        <button class="pet-info-pill" data-action="select-pet"><span class="pill-icon">●</span><span><b id="info-species">${escapeHtml(PETS[state.petId]?.name || PETS.bunny.name)}</b><small>伙伴</small></span><span class="pill-edit">⌄</span></button>
+                        <div class="pet-info-pill pet-switcher"><span class="switch-title">伙伴</span><div class="pet-choice-row">
+                            <button type="button" class="pet-choice" data-action="select-pet" data-id="bunny"><span class="pet-choice-dot bunny-dot"></span><span>兔</span></button>
+                            <button type="button" class="pet-choice" data-action="select-pet" data-id="cat"><span class="pet-choice-dot cat-dot"></span><span>猫</span></button>
+                            <button type="button" class="pet-choice" data-action="select-pet" data-id="dog"><span class="pet-choice-dot dog-dot"></span><span>狗</span></button>
+                        </div></div>
                         <div class="pet-info-pill stats-pill"><div class="mini-stat"><span>♥</span><strong id="mini-mood">${Math.round(state.mood)}</strong></div><div class="mini-stat"><span>✦</span><strong id="mini-clean">${Math.round(state.clean)}</strong></div><div class="mini-stat"><span>◒</span><strong id="mini-fullness">${Math.round(state.fullness)}</strong></div></div>
                     </div>
 
