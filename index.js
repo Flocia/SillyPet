@@ -4,7 +4,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '2.3.1';
+    const VERSION = '2.4.0';
 
     const PETS = {
         bunny: { id: 'bunny', name: '白兔团子', color: '#f7f7fb', shadow: '#c9cad5', eye: '#413b4d', blush: '#f0a4ad' },
@@ -27,9 +27,9 @@
     ];
 
     const PLAY_ACTIONS = [
-        { id: 'pat', name: '摸摸头', icon: '🖐', desc: '轻轻摸一摸', mood: [6, 13], clean: [0, 1], fullness: [0, 0] },
-        { id: 'ball', name: '玩皮球', icon: '⚽', desc: '追着小球跑', mood: [8, 16], clean: [-2, 0], fullness: [-1, -1] },
-        { id: 'rope', name: '跳绳', icon: '〰', desc: '一起跳一跳', mood: [10, 18], clean: [-3, -1], fullness: [-2, -1] },
+        { id: 'pat', name: '摸摸头', icon: '🖐', desc: '点一下，轻轻摸摸', mood: [6, 13], clean: [0, 1], fullness: [0, 0] },
+        { id: 'roll', name: '打滚', icon: '↻', desc: '点团子就开始翻滚', mood: [7, 14], clean: [-2, 0], fullness: [-1, 0] },
+        { id: 'catch', name: '顶球', icon: '●', desc: '把球拖出去让它接住', mood: [10, 20], clean: [-2, 0], fullness: [-1, 0] },
     ];
 
     const ACTION_LINES = {
@@ -42,7 +42,8 @@
         play: {
             pat: ['呼噜呼噜……好舒服。', '耳朵软乎乎地抖了一下。', '团子往你的手心蹭了蹭。'],
             ball: ['接到啦！', '团子一路滚过去追球。', '皮球咕噜噜地跑起来！'],
-            rope: ['跳！跳！跳！', '团子蹦得圆滚滚。', '跳完开心得转了个圈！'],
+            roll: ['咕噜咕噜！团子滚起来啦！', '圆滚滚地翻了一圈～', '停下来时还在摇摇晃晃。'],
+            catch: ['接到啦！', '团子顶住球啦！', '球球稳稳地落进怀里。'],
         },
     };
 
@@ -50,9 +51,6 @@
     let ticker = null;
     let initialized = false;
     let keydownBound = false;
-    let pattingMode = false;
-    let patSession = null;
-    let lastPatRewardAt = 0;
 
     function defaults() {
         return { petId: 'bunny', name: '小团子', mood: 80, clean: 85, fullness: 74, lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
@@ -83,12 +81,12 @@
     }
 
     function petFace() {
-        if (needsFood()) return { eyes: '• •', mouth: '︵', label: '咕噜…肚子空空的' };
-        if (needsBath()) return { eyes: '• •', mouth: '﹏', label: '想洗澡了…有点脏' };
-        if (needsComfort()) return { eyes: 'ಥ ಥ', mouth: '︶', label: '呜…有一点难过' };
-        if (state.mood > 82) return { eyes: '◕ ◕', mouth: 'ᴗ', label: '今天心情闪闪发光' };
-        if (state.mood > 52) return { eyes: '•ᴗ•', mouth: 'ᴗ', label: '安安静静陪着你' };
-        return { eyes: '• •', mouth: '﹏', label: '有点无聊了' };
+        if (needsFood()) return { eyes: '◉ ◉', mouth: '︵', label: '咕噜…肚子空空的' };
+        if (needsBath()) return { eyes: '◉ ◉', mouth: '﹏', label: '想洗澡了…有点脏' };
+        if (needsComfort()) return { eyes: '◕ ◕', mouth: '︶', label: '呜…有一点难过' };
+        if (state.mood > 82) return { eyes: '★ ★', mouth: 'ᴗ', label: '今天心情闪闪发光' };
+        if (state.mood > 52) return { eyes: '● ●', mouth: 'ᴗ', label: '安安静静陪着你' };
+        return { eyes: '● ●', mouth: '﹏', label: '有点无聊了' };
     }
 
     function speciesHtml(pet) {
@@ -127,7 +125,7 @@
                     <div class="pet-shell-rivet r1"></div><div class="pet-shell-rivet r2"></div>
                     <div class="pet-topbar"><div class="device-brand"><div class="device-logo">SILLY<span>PET</span></div><div class="device-subtitle">DANGO FRIEND • v${VERSION}</div></div><div class="device-status"><span class="device-heart">♥</span><span class="device-battery">▰▰▰</span><button class="pet-mini-btn" data-action="reset">↺</button><button class="pet-mini-btn" data-action="close">×</button></div></div>
                     <div class="pet-main-grid"><section class="pet-stage"><div class="lcd-bezel"></div><div class="stage-grid"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="lcd-topline"><span>DAY 01</span><span class="lcd-sun">☀</span><span>08:15</span></div><div class="stage-caption"><span id="pet-status-dot"></span><span id="pet-status-text">${escapeHtml(petFace().label)}</span></div>
-                        <div class="play-fx-layer" aria-hidden="true"><div class="fx-hand">🖐</div><div class="fx-ball">⚪</div><div class="fx-rope left"></div><div class="fx-rope right"></div><div class="fx-dust d1"></div><div class="fx-dust d2"></div><div class="fx-note">♪</div></div>
+                        <div class="play-fx-layer" aria-hidden="true"><div class="fx-hand">🖐</div><div class="fx-ball" role="button" aria-label="拖动皮球">⚪</div><div class="fx-dust d1"></div><div class="fx-dust d2"></div><div class="fx-note">♪</div><div class="fx-catch-text">拖住球，朝团子丢过去！</div></div>
                         <div class="pet-art-wrap">${petArtHtml()}</div><div class="name-plate"><span class="name-dot"></span><span id="pet-name-label">${escapeHtml(state.name)}</span><button class="rename-btn" data-action="rename">✎</button></div><div class="lcd-baseline"><span>♡ DANGO FRIEND</span><span>PLAY TOGETHER</span></div>
                     </section><aside class="pet-side">
                         <div class="pet-card pet-selector-block"><div class="section-title"><span>小伙伴</span><span>FRIENDS</span></div><div class="pet-selector">${Object.values(PETS).map(p => `<button class="pet-choice ${state.petId===p.id?'active':''}" data-action="select-pet" data-id="${p.id}"><span class="mini-pet mini-${p.id}"></span><span>${p.name}</span><b>●</b></button>`).join('')}</div></div>
@@ -137,7 +135,7 @@
                     <div class="pet-tabs" role="tablist"><button class="pet-tab active" data-tab="feed"><span>◉</span><strong>喂喂我</strong><small>FOOD</small></button><button class="pet-tab" data-tab="bath"><span>≈</span><strong>洗香香</strong><small>BATH</small></button><button class="pet-tab" data-tab="play"><span>♡</span><strong>和我玩</strong><small>PLAY</small></button></div>
                     <div class="tab-content active" id="tab-feed"><div class="menu-hint">选一份小点心投喂 <span>· 每次都会有随机奖励</span></div><div class="action-grid">${FOODS.map(x=>actionCard(x,'feed')).join('')}</div><div class="tip-line">吃饱了会更有精神，饿肚子时会开始咕噜咕噜。</div></div>
                     <div class="tab-content" id="tab-bath"><div class="menu-hint">选择清洁用品 <span>· 洗干净会恢复心情</span></div><div class="action-grid two">${TOOLS.map(x=>actionCard(x,'bath')).join('')}</div><div class="tip-line">变脏时会出现小污点和不开心的小动作。</div></div>
-                    <div class="tab-content" id="tab-play"><div class="menu-hint">选择一种互动 <span>· 每一种都会触发不同动作</span></div><div class="action-grid three">${PLAY_ACTIONS.map(x=>actionCard(x,'play')).join('')}</div><div class="tip-line">摸头会蹭手、皮球会滚动、跳绳会连续起跳。</div></div>
+                    <div class="tab-content" id="tab-play"><div class="menu-hint">选择一种互动 <span>· 每一种都会触发不同动作</span></div><div class="action-grid three">${PLAY_ACTIONS.map(x=>actionCard(x,'play')).join('')}</div><div class="tip-line">摸头：点击一下；打滚：直接点团子；顶球：拖住球丢给它接。</div></div>
                     <div class="pet-footer"><span>♡ 今日照顾 <b id="care-count">${getCareCount()}</b> 次</span><span>LOCAL SAVE · DANGO MODE</span></div>
                 </div></div>`;
             document.body.appendChild(host); bindEvents(host);
@@ -168,7 +166,7 @@
             if(button.dataset.tab)switchTab(button.dataset.tab);
             const action=button.dataset.action;
             if(!action)return;
-            if(action==='close'){stopPatMode();togglePanel(false);}
+            if(action==='close')togglePanel(false);
             else if(action==='rename')renamePet();
             else if(action==='select-pet')selectPet(button.dataset.id);
             else if(action==='feed')doFeed(button.dataset.id);
@@ -176,159 +174,161 @@
             else if(action==='play')doPlay(button.dataset.id);
             else if(action==='reset')resetPet();
         });
-
-        const stage = host.querySelector('.pet-stage');
-        const artWrap = host.querySelector('.pet-art-wrap');
-        const patButton = host.querySelector('[data-action=\"play\"][data-id=\"pat\"]');
-        const updatePatCursor = (event)=>{
-            if(!pattingMode || !artWrap) return;
-            const rect=artWrap.getBoundingClientRect();
-            const x=event.clientX-rect.left, y=event.clientY-rect.top;
-            const w=rect.width, h=rect.height;
-            // Top-center ellipse is the dango head area; ears sit above it.
-            const cx=w/2, cy=h*0.58;
-            const nx=(x-cx)/(w*0.27), ny=(y-cy)/(h*0.30);
-            const inside=(nx*nx + ny*ny) <= 1.0;
-            const art=host.querySelector('.pet-avatar');
-            art?.classList.toggle('pat-hover',inside);
-            host.classList.toggle('pat-over-pet',inside);
-            if(inside){
-                const fx=host.querySelector('.fx-hand');
-                if(fx){
-                    fx.style.left=`${Math.max(8,Math.min(92,(x/w)*100))}%`;
-                    fx.style.top=`${Math.max(4,Math.min(55,(y/h)*100-10))}%`;
-                    fx.style.opacity='1';
-                    fx.style.transform='translate(-50%,-50%) rotate(-18deg)';
-                }
-                triggerPatStroke(event);
-            }else{
-                host.querySelector('.fx-hand')?.style.setProperty('opacity','0');
+        const artWrap=host.querySelector('.pet-art-wrap');
+        artWrap?.addEventListener('click',event=>{
+            if(host.classList.contains('pet-roll-ready')){
+                event.preventDefault();
+                doPetRoll();
             }
-        };
-        const startPat = ()=>{
-            if(!artWrap) return;
-            pattingMode=true;
-            patSession={startX:0,startY:0,lastX:0,lastY:0};
-            host.classList.add('pat-mode-active');
-            patButton?.classList.add('active');
-            const reaction=host.querySelector('#pet-reaction');
-            const status=host.querySelector('#pet-status-text');
-            if(reaction)reaction.textContent='摸摸模式开启：把鼠标停在头顶轻轻来回滑动吧 ✋';
-            if(status)status.textContent='请在头顶来回滑动';
-        };
-        const stopPatModeLocal=()=>{
-            pattingMode=false;
-            patSession=null;
-            host.classList.remove('pat-mode-active','pat-over-pet');
-            patButton?.classList.remove('active');
-            host.querySelector('.fx-hand')?.style.setProperty('opacity','0');
-            host.querySelector('.pet-avatar')?.classList.remove('pat-hover','being-patted');
-        };
-        stage?.addEventListener('pointermove',updatePatCursor,{passive:true});
-        stage?.addEventListener('pointerleave',()=>{
-            host.classList.remove('pat-over-pet');
-            host.querySelector('.fx-hand')?.style.setProperty('opacity','0');
         });
-        stage?.addEventListener('pointerdown',event=>{
-            if(!pattingMode)return;
-            if(event.button!==undefined && event.button!==0 && event.pointerType!=='touch')return;
-            patSession={startX:event.clientX,startY:event.clientY,lastX:event.clientX,lastY:event.clientY};
-            updatePatCursor(event);
-        },{passive:true});
-        stage?.addEventListener('pointerup',()=>{
-            if(pattingMode && host.classList.contains('pat-over-pet')) return;
-        });
-        stage?.addEventListener('pointercancel',()=>{if(pattingMode)host.querySelector('.fx-hand')?.style.setProperty('opacity','0');});
-        host._stopPatMode = stopPatModeLocal;
-        if(!keydownBound){document.addEventListener('keydown',event=>{if(event.key==='Escape'){stopPatMode();togglePanel(false);}});keydownBound=true;}
+        setupCatchBall(host);
+        if(!keydownBound){document.addEventListener('keydown',event=>{if(event.key==='Escape')togglePanel(false);});keydownBound=true;}
     }
-    function togglePanel(force){const panel=document.getElementById('st-pixel-pet-panel'),fab=document.getElementById('st-pixel-pet-fab');if(!panel||!fab)return;const currentOpen=panel.getAttribute('aria-hidden')==='false';const open=force===undefined?!currentOpen:Boolean(force); if(!open) stopPatMode(); panel.setAttribute('aria-hidden',String(!open));fab.classList.toggle('is-open',open);fab.setAttribute('aria-expanded',String(open));document.documentElement.classList.toggle('st-sillypet-open',open);}
+    function togglePanel(force){const panel=document.getElementById('st-pixel-pet-panel'),fab=document.getElementById('st-pixel-pet-fab');if(!panel||!fab)return;const currentOpen=panel.getAttribute('aria-hidden')==='false';const open=force===undefined?!currentOpen:Boolean(force); if(!open) stopCatchGame(); panel.setAttribute('aria-hidden',String(!open));fab.classList.toggle('is-open',open);fab.setAttribute('aria-expanded',String(open));document.documentElement.classList.toggle('st-sillypet-open',open);}
     function switchTab(tab){document.querySelectorAll('#st-pixel-pet-root .pet-tab').forEach(item=>item.classList.toggle('active',item.dataset.tab===tab));document.querySelectorAll('#st-pixel-pet-root .tab-content').forEach(item=>item.classList.toggle('active',item.id===`tab-${tab}`));}
     function ensureFresh(){applyDecay();}
     function selectPet(id){if(!PETS[id])return;ensureFresh();state.petId=id;state.mood=clamp(state.mood+rand(2,6));state.lastAction=`遇见了 ${PETS[id].name}！`;state.lastActionType='pet';saveState();recordCare();updatePanel(true);playFx('select');}
     function doFeed(id){ensureFresh();const food=FOODS.find(x=>x.id===id);if(!food)return;const amount=rand(food.gain[0],food.gain[1]),moodGain=rand(4,9);state.fullness=clamp(state.fullness+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.feed[state.petId])} 饱肚 +${amount} / 心情 +${moodGain}`;state.lastActionType='feed';saveState();recordCare();updatePanel(true);playFx('feed');}
     function doBath(id){ensureFresh();const tool=TOOLS.find(x=>x.id===id);if(!tool)return;const amount=rand(tool.gain[0],tool.gain[1]),moodGain=rand(5,11);state.clean=clamp(state.clean+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.bath)} 清洁 +${amount} / 心情 +${moodGain}`;state.lastActionType='bath';saveState();recordCare();updatePanel(true);playFx('bath');}
-    function triggerPatStroke(event){
-        if(!pattingMode)return;
+    function doPetRoll(){
         const host=document.getElementById('st-pixel-pet-root');
-        if(!host || !host.classList.contains('pat-over-pet'))return;
-        const now=Date.now();
-        const artWrap=host.querySelector('.pet-art-wrap');
-        if(!artWrap)return;
-        const rect=artWrap.getBoundingClientRect();
-        const x=event.clientX-rect.left, y=event.clientY-rect.top;
-        if(patSession){
-            const moved=Math.hypot(x-(patSession.lastX||x),y-(patSession.lastY||y));
-            if(moved<4 && now-lastPatRewardAt<220)return;
-        }
-        if(now-lastPatRewardAt<260)return;
-        lastPatRewardAt=now;
-        if(patSession){patSession.lastX=x;patSession.lastY=y;}
+        if(!host || !host.classList.contains('pet-roll-ready'))return;
         ensureFresh();
-        const moodGain=rand(2,5);
+        const moodGain=rand(7,14);
         state.mood=clamp(state.mood+moodGain);
-        state.clean=clamp(state.clean+rand(0,1));
-        state.lastAction=`${PETS[state.petId].name} 舒服地被摸着头…… 心情 +${moodGain}`;
-        state.lastActionType='pat';
+        state.clean=clamp(state.clean-rand(0,2));
+        state.fullness=clamp(state.fullness-rand(0,1));
+        state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play.roll)} 心情 +${moodGain}`;
+        state.lastActionType='roll';
         saveState();recordCare();
-        const status=host.querySelector('#pet-status-text');
-        const reaction=host.querySelector('#pet-reaction');
-        if(status)status.textContent='呼噜呼噜……继续摸摸';
-        if(reaction)reaction.textContent='手指正在头顶轻轻来回滑动 ✋';
-        const art=host.querySelector('.pet-avatar');
-        if(art){art.classList.remove('being-patted');void art.offsetWidth;art.classList.add('being-patted');}
-        updateStatsOnly(host);
+        host.classList.remove('pet-roll-ready');
+        playFx('roll');
+        updatePanel(false);
     }
 
-    function updateStatsOnly(host){
-        const stats=host?.querySelector('.stats-card .stats-list');
-        if(stats)stats.innerHTML=`${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}`;
-        const care=host?.querySelector('#care-count');
-        if(care)care.textContent=getCareCount();
-    }
-
-    function stopPatMode(){
+    function startCatchGame(){
         const host=document.getElementById('st-pixel-pet-root');
-        pattingMode=false;patSession=null;
-        host?.classList.remove('pat-mode-active','pat-over-pet');
-        host?.querySelector('[data-action=\"play\"][data-id=\"pat\"]')?.classList.remove('active');
-        host?.querySelector('.fx-hand')?.style.setProperty('opacity','0');
-        host?.querySelector('.pet-avatar')?.classList.remove('pat-hover','being-patted');
+        const ball=host?.querySelector('.fx-ball');
+        if(!host||!ball)return;
+        host.classList.remove('fx-roll','fx-catch');
+        host.classList.add('catch-mode');
+        ball.style.left='14%';
+        ball.style.top='62%';
+        ball.style.transform='translate(-50%,-50%) scale(1)';
+        ball.style.transition='none';
+        ball.style.opacity='1';
+        const text=host.querySelector('.fx-catch-text');
+        if(text)text.textContent='拖住球，朝团子丢过去！';
+    }
+
+    function setupCatchBall(host){
+        const ball=host.querySelector('.fx-ball');
+        const stage=host.querySelector('.pet-stage');
+        if(!ball||!stage)return;
+        let drag=null;
+        ball.addEventListener('pointerdown',event=>{
+            if(!host.classList.contains('catch-mode'))return;
+            event.preventDefault();
+            ball.setPointerCapture?.(event.pointerId);
+            drag={pointerId:event.pointerId};
+        });
+        ball.addEventListener('pointermove',event=>{
+            if(!drag||event.pointerId!==drag.pointerId)return;
+            const rect=stage.getBoundingClientRect();
+            const x=Math.max(16,Math.min(rect.width-16,event.clientX-rect.left));
+            const y=Math.max(18,Math.min(rect.height-18,event.clientY-rect.top));
+            ball.style.left=`${x}px`;
+            ball.style.top=`${y}px`;
+        });
+        ball.addEventListener('pointerup',event=>{
+            if(!drag||event.pointerId!==drag.pointerId)return;
+            drag=null;
+            const rect=stage.getBoundingClientRect();
+            const x=event.clientX-rect.left, y=event.clientY-rect.top;
+            const ok=x>rect.width*0.44 && x<rect.width*0.92 && y>rect.height*0.18 && y<rect.height*0.82;
+            if(!ok){
+                ball.animate([{transform:'translate(-50%,-50%) scale(1)'},{transform:'translate(-50%,-50%) scale(.78)'},{transform:'translate(-50%,-50%) scale(1)'}],{duration:280,iterations:1});
+                return;
+            }
+            host.classList.add('fx-catch');
+            ball.style.transition='left .55s steps(7,end), top .55s steps(7,end), transform .55s steps(7,end)';
+            ball.style.left='52%';
+            ball.style.top='46%';
+            ball.style.transform='translate(-50%,-50%) scale(.78)';
+            const text=host.querySelector('.fx-catch-text');
+            if(text)text.textContent='接住啦！';
+            setTimeout(()=>finishCatchGame(host,ball),560);
+        });
+        ball.addEventListener('pointercancel',()=>{drag=null;});
+    }
+
+    function finishCatchGame(host,ball){
+        ensureFresh();
+        const moodGain=rand(10,20);
+        state.mood=clamp(state.mood+moodGain);
+        state.clean=clamp(state.clean-rand(0,2));
+        state.fullness=clamp(state.fullness-rand(0,1));
+        state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play.catch)} 心情 +${moodGain}`;
+        state.lastActionType='catch';
+        saveState();recordCare();
+        const art=host.querySelector('.pet-avatar');
+        if(art){art.classList.remove('react-positive');void art.offsetWidth;art.classList.add('react-positive');}
+        const reaction=host.querySelector('#pet-reaction');
+        const status=host.querySelector('#pet-status-text');
+        if(reaction)reaction.textContent=state.lastAction;
+        if(status)status.textContent='球球接住啦！';
+        updateStatsOnly(host);
+        setTimeout(()=>{
+            host.classList.remove('catch-mode','fx-catch');
+            ball.style.opacity='0';
+        },650);
+    }
+
+    function stopCatchGame(){
+        const host=document.getElementById('st-pixel-pet-root');
+        if(!host)return;
+        host.classList.remove('catch-mode','fx-catch','pet-roll-ready');
+        const ball=host.querySelector('.fx-ball');
+        if(ball)ball.style.opacity='0';
     }
 
     function doPlay(id){
         ensureFresh();
+        const host=document.getElementById('st-pixel-pet-root');
         const action=PLAY_ACTIONS.find(x=>x.id===id);
-        if(!action)return;
+        if(!action||!host)return;
+        stopCatchGame();
         if(id==='pat'){
-            const host=document.getElementById('st-pixel-pet-root');
-            if(pattingMode){ stopPatMode(); return; }
-            // Pat is now a gesture mode: clicking the option only arms it.
-            pattingMode=true;
-            patSession={startX:0,startY:0,lastX:0,lastY:0};
-            lastPatRewardAt=0;
-            host?.classList.add('pat-mode-active');
-            host?.querySelector('[data-action=\"play\"][data-id=\"pat\"]')?.classList.add('active');
-            const reaction=host?.querySelector('#pet-reaction');
-            const status=host?.querySelector('#pet-status-text');
-            if(reaction)reaction.textContent='摸摸模式开启：把鼠标停在头顶轻轻来回滑动吧 ✋';
-            if(status)status.textContent='请在头顶来回滑动';
+            const moodGain=rand(6,13);
+            state.mood=clamp(state.mood+moodGain);
+            state.lastAction=`${PETS[state.petId].name} 被轻轻摸摸头啦～ 心情 +${moodGain}`;
+            state.lastActionType='pat';
+            saveState();recordCare();updatePanel(true);playFx('pat');
             return;
         }
-        const moodGain=rand(action.mood[0],action.mood[1]);
-        state.mood=clamp(state.mood+moodGain);
-        state.clean=clamp(state.clean+rand(action.clean[0],action.clean[1]));
-        state.fullness=clamp(state.fullness+rand(action.fullness[0],action.fullness[1]));
-        state.lastAction=`${PETS[state.petId].name} ${pick(ACTION_LINES.play[id])} 心情 +${moodGain}`;
-        state.lastActionType=id;
-        saveState();recordCare();updatePanel(true);playFx(id);
+        if(id==='roll'){
+            host.classList.add('pet-roll-ready');
+            const reaction=host.querySelector('#pet-reaction');
+            const status=host.querySelector('#pet-status-text');
+            if(reaction)reaction.textContent='现在点一下团子，它就会开始打滚！';
+            if(status)status.textContent='点团子开始打滚';
+            return;
+        }
+        if(id==='catch'){
+            startCatchGame();
+            const reaction=host.querySelector('#pet-reaction');
+            const status=host.querySelector('#pet-status-text');
+            if(reaction)reaction.textContent='把球拖出去，丢给团子接住！';
+            if(status)status.textContent='准备接球';
+        }
     }
+
     function resetPet(){if(!window.confirm('要把宠物恢复成全新的初始状态吗？'))return;state=defaults();localStorage.removeItem(CARE_KEY);saveState();updatePanel(true);}
     function renamePet(){const name=window.prompt('给你的宠物取个名字：',state.name||'小团子');if(name&&name.trim()){state.name=name.trim().slice(0,12);state.lastAction=`它的名字改成了「${state.name}」`;saveState();updatePanel(true);}}
     function getCareCount(){const value=Number(localStorage.getItem(CARE_KEY)||0);return Number.isFinite(value)?value:0;}
     function recordCare(){try{localStorage.setItem(CARE_KEY,String(getCareCount()+1));}catch(_) {}}
     function updatePanel(withAnim=false){const panel=document.getElementById('st-pixel-pet-panel');if(!panel)return;ensureFresh();const artWrap=panel.querySelector('.pet-art-wrap');if(artWrap)artWrap.innerHTML=petArtHtml();const nameLabel=panel.querySelector('#pet-name-label'),statusText=panel.querySelector('#pet-status-text'),reaction=panel.querySelector('#pet-reaction'),careCount=panel.querySelector('#care-count');if(nameLabel)nameLabel.textContent=state.name;if(statusText)statusText.textContent=petFace().label;if(reaction)reaction.textContent=state.lastAction||'刚刚见面';if(careCount)careCount.textContent=getCareCount();const dot=panel.querySelector('#pet-status-dot');if(dot)dot.classList.toggle('alert',needsFood()||needsBath()||needsComfort());const stats=panel.querySelector('.stats-card .stats-list');if(stats)stats.innerHTML=`${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}`;panel.querySelectorAll('.pet-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.id===state.petId));if(withAnim){const art=panel.querySelector('.pet-avatar');if(art){art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add('react-positive');}}}
-    function playFx(type){const root=document.getElementById('st-pixel-pet-root'),art=root?.querySelector('.pet-avatar');if(!root||!art)return;root.classList.remove('fx-pat','fx-ball','fx-rope','fx-feed','fx-bath','fx-select');void root.offsetWidth;root.classList.add(`fx-${type}`);art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add(type==='rope'||type==='ball'?'react':'react-positive');setTimeout(()=>root.classList.remove(`fx-${type}`),type==='rope'?1200:900);}
+    function playFx(type){const root=document.getElementById('st-pixel-pet-root'),art=root?.querySelector('.pet-avatar');if(!root||!art)return;root.classList.remove('fx-pat','fx-ball','fx-rope','fx-roll','fx-catch','fx-feed','fx-bath','fx-select');void root.offsetWidth;root.classList.add(`fx-${type}`);art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add(type==='ball'||type==='roll'?'react':'react-positive');setTimeout(()=>root.classList.remove(`fx-${type}`),type==='roll'?1000:900);}
     function startTicker(){if(ticker)clearInterval(ticker);ticker=setInterval(()=>{if(applyDecay())updatePanel(false);},30000);}
     function stopTicker(){if(ticker){clearInterval(ticker);ticker=null;}}
     function ensureHost(){if(!document.body)return false;buildPanel();ensureLauncher();return !!document.getElementById('st-pixel-pet-fab');}

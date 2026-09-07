@@ -505,4 +505,54 @@
   .cat-ear { width: 40px !important; height: 46px !important; }
   .dog-ear { width: 39px !important; height: 53px !important; }
 }
-\n/* v2.3.1 interactive head-patting mode */\n#st-pixel-pet-root.pat-mode-active .pet-stage { cursor: none; }\n#st-pixel-pet-root.pat-mode-active .action-play[data-id="pat"] {\n  outline: 3px solid rgba(220, 125, 154, .35);\n  transform: translateY(-1px);\n}\n#st-pixel-pet-root.pat-mode-active .pet-art-wrap {\n  cursor: none;\n}\n#st-pixel-pet-root.pat-over-pet .pet-avatar {\n  filter: drop-shadow(0 0 0 rgba(0,0,0,0));\n}\n#st-pixel-pet-root .pet-avatar.pat-hover {\n  animation: patHover 1s steps(4,end) infinite;\n}\n#st-pixel-pet-root .pet-avatar.being-patted {\n  animation: patReaction .34s steps(3,end);\n}\n#st-pixel-pet-root.pat-mode-active .fx-hand {\n  opacity: 0;\n  z-index: 45;\n  pointer-events: none;\n  transition: left .04s linear, top .04s linear;\n  text-shadow: 2px 2px 0 rgba(80,62,72,.16);\n}\n#st-pixel-pet-root.pat-mode-active .stage-caption::after {\n  content: '  ✋ 滑动摸摸';\n  color: #b85d7b;\n}\n@keyframes patHover {\n  0%,100% { transform: translate3d(0,0,0) scale(1); }\n  50% { transform: translate3d(0,1px,0) scale(1.015,.99); }\n}\n@keyframes patReaction {\n  0% { transform: translate3d(0,0,0) scale(1); }\n  35% { transform: translate3d(-2px,1px,0) scale(1.025,.985); }\n  70% { transform: translate3d(2px,0,0) scale(.99,1.01); }\n  100% { transform: translate3d(0,0,0) scale(1); }\n}\n
+/* old pat-mode styles retained but disabled below */\n#st-pixel-pet-root.pat-mode-active .pet-stage { cursor: none; }\n#st-pixel-pet-root.pat-mode-active .action-play[data-id="pat"] {\n  outline: 3px solid rgba(220, 125, 154, .35);\n  transform: translateY(-1px);\n}\n#st-pixel-pet-root.pat-mode-active .pet-art-wrap {\n  cursor: none;\n}\n#st-pixel-pet-root.pat-over-pet .pet-avatar {\n  filter: drop-shadow(0 0 0 rgba(0,0,0,0));\n}\n#st-pixel-pet-root .pet-avatar.pat-hover {\n  animation: patHover 1s steps(4,end) infinite;\n}\n#st-pixel-pet-root .pet-avatar.being-patted {\n  animation: patReaction .34s steps(3,end);\n}\n#st-pixel-pet-root.pat-mode-active .fx-hand {\n  opacity: 0;\n  z-index: 45;\n  pointer-events: none;\n  transition: left .04s linear, top .04s linear;\n  text-shadow: 2px 2px 0 rgba(80,62,72,.16);\n}\n#st-pixel-pet-root.pat-mode-active .stage-caption::after {\n  content: '  ✋ 滑动摸摸';\n  color: #b85d7b;\n}\n@keyframes patHover {\n  0%,100% { transform: translate3d(0,0,0) scale(1); }\n  50% { transform: translate3d(0,1px,0) scale(1.015,.99); }\n}\n@keyframes patReaction {\n  0% { transform: translate3d(0,0,0) scale(1); }\n  35% { transform: translate3d(-2px,1px,0) scale(1.025,.985); }\n  70% { transform: translate3d(2px,0,0) scale(.99,1.01); }\n  100% { transform: translate3d(0,0,0) scale(1); }\n}\n
+
+/* v2.4.0 — cute Tamagotchi proportions + direct play interactions */
+.pet-avatar { width: 205px !important; height: 245px !important; }
+.pet-art-wrap { width: 320px !important; height: 310px !important; bottom: 62px !important; }
+.dango-ball { width: 150px !important; height: 150px !important; left: 35px !important; right: 35px !important; bottom: 38px !important; }
+.face-eyes {
+  top: 44px !important; font-size: 29px !important; letter-spacing: 10px !important;
+  line-height: 1 !important; transform: scaleX(1.12);
+  text-shadow: 3px 0 0 currentColor, 0 2px 0 rgba(255,255,255,.24) !important;
+}
+.face-mouth { top: 77px !important; font-size: 17px !important; }
+.blush { top: 73px !important; width: 17px !important; height: 6px !important; }
+.blush.b1 { left: 12px !important; }
+.blush.b2 { right: 12px !important; }
+.shine { left: 25px !important; top: 15px !important; width: 22px !important; height: 10px !important; }
+.belly-glow { width: 62px !important; height: 25px !important; bottom: 26px !important; }
+.bunny-ear { width: 36px !important; height: 65px !important; }
+.bunny-ear.e1 { left: 54px !important; } .bunny-ear.e2 { right: 54px !important; }
+.cat-ear { width: 42px !important; height: 48px !important; }
+.cat-ear.e1 { left: 55px !important; } .cat-ear.e2 { right: 55px !important; }
+.dog-ear { width: 41px !important; height: 54px !important; }
+.dog-ear.e1 { left: 50px !important; } .dog-ear.e2 { right: 50px !important; }
+.tail { right: 18px !important; bottom: 78px !important; transform: scale(.9); }
+.pet-roll-ready .pet-art-wrap { cursor: pointer !important; }
+.pet-roll-ready .pet-art-wrap::after { content: '点击团子开始打滚'; position: absolute; left: 50%; top: 15px; transform: translateX(-50%); padding: 5px 8px; border: 2px solid #c9829c; background: #fff8fb; color: #9b536e; font: 900 10px ui-monospace,monospace; box-shadow: 3px 3px 0 rgba(140,83,106,.15); z-index: 50; }
+.catch-mode .fx-ball { pointer-events: auto !important; cursor: grab !important; opacity: 1 !important; z-index: 55 !important; touch-action: none; user-select: none; }
+.catch-mode .fx-ball:active { cursor: grabbing !important; }
+.fx-catch-text { opacity: 0; position: absolute; left: 50%; top: 22px; transform: translateX(-50%); padding: 6px 9px; background: #fff7fb; border: 2px solid #ce8aa1; box-shadow: 3px 3px 0 rgba(140,83,106,.12); color: #8a5167; font: 900 10px ui-monospace,monospace; white-space: nowrap; z-index: 60; }
+.catch-mode .fx-catch-text { opacity: 1; }
+.fx-rope { display:none !important; }
+#st-pixel-pet-root.fx-roll .pet-art-wrap .pet-avatar { animation: fxRollCute 1s steps(10,end); }
+#st-pixel-pet-root.fx-catch .pet-art-wrap .pet-avatar { animation: fxCatchCute .65s steps(7,end); }
+#st-pixel-pet-root.fx-pat .pet-art-wrap .pet-avatar { animation: fxPatCute .7s steps(6,end); }
+#st-pixel-pet-root.fx-pat .fx-hand { animation: fxPat .7s steps(5,end); }
+@keyframes fxRollCute {
+  0% { transform: translateX(0) rotate(0); } 22% { transform: translateX(14px) rotate(90deg); } 45% { transform: translateX(34px) rotate(190deg); } 68% { transform: translateX(54px) rotate(285deg); } 100% { transform: translateX(0) rotate(360deg); }
+}
+@keyframes fxPatCute {
+  0% { transform: translateY(0) scale(1); } 30% { transform: translateY(2px) scale(1.035,.97); } 55% { transform: translateY(-2px) scale(.99,1.015); } 100% { transform: translateY(0) scale(1); }
+}
+@keyframes fxCatchCute {
+  0% { transform: translateY(0) scale(1); } 35% { transform: translateY(-10px) scale(1.02,.98); } 70% { transform: translateY(2px) scale(.98,1.02); } 100% { transform: translateY(0) scale(1); }
+}
+@media(max-width:760px){
+  .pet-avatar { width: 190px !important; height: 225px !important; }
+  .pet-art-wrap { width: 280px !important; height: 290px !important; bottom: 57px !important; }
+  .dango-ball { width: 140px !important; height: 140px !important; }
+  .face-eyes { top: 42px !important; font-size: 27px !important; letter-spacing: 9px !important; }
+  .face-mouth { top: 72px !important; }
+}
