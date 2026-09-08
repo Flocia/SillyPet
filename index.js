@@ -4,7 +4,7 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '3.4.0';
+    const VERSION = '3.5.1';
 
     const PETS = {
         ghost: { id: 'ghost', name: '白色幽灵', color: '#ffffff', shadow: '#d9d4dc', eye: '#2b2338', blush: '#f3b6c8' },
@@ -49,6 +49,7 @@
     let ticker = null;
     let initialized = false;
     let keydownBound = false;
+    let resizeBound = false;
 
     function defaults() {
         return { petId: 'ghost', name: '小白兔', mood: 80, clean: 85, fullness: 74, bornAt: Date.now(), lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
@@ -176,10 +177,15 @@
                 </div></div>`;
             document.body.appendChild(host);
             bindEvents(host);
+            if(!resizeBound){
+                window.addEventListener('resize', fitDeviceWindow, {passive:true});
+                resizeBound = true;
+            }
         }
         ensureLauncher();
         updatePanel();
         updateClock();
+        fitDeviceWindow();
         ensureClockTicker();
     }
 

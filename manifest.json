@@ -1,5 +1,5 @@
 {
-  "display_name": "SillyPet · 白色像素幽灵",
+  "display_name": "SillyPet · Fixed Tamagotchi",
   "loading_order": 80,
   "requires": [],
   "optional": [],
@@ -7,8 +7,8 @@
   "js": "index.js",
   "css": "style.css",
   "author": "Flocia",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "homePage": "https://github.com/Flocia/SillyPet",
   "auto_update": true,
-  "description": "Tamagotchi-style white pixel ghost pet."
+  "description": "Full-featured Tamagotchi-style pixel pet with a complete fixed-screen handheld UI and no scrolling."
 }
