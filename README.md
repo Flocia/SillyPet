@@ -2,4 +2,4 @@
 
 Tamagotchi-style SillyTavern pet extension.
 
-v3.5.1 keeps all interaction features and uses a fixed handheld device canvas that scales to the viewport without scrolling.
+v3.5.2 keeps the complete interaction set while using a compact fixed handheld layout.
