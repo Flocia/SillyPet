@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.4.1
-- Fixed white pixel ghost being clipped in the LCD stage.
-- Added an explicit sprite bounds box and mobile scaling.
-- Preserved the existing UI, launcher and interactions.
+## 3.4.2
+- Rebuilt the ghost sprite with a larger complete pixel silhouette.
+- Centered the sprite in the LCD stage to prevent clipping.
+- Added robust desktop/mobile scaling.

@@ -98,9 +98,8 @@
 
     // Reference-style pixel mascots: hand-authored 12px box-shadow sprites.
     function petSvgHtml(pet) {
-        return `<div class="pixel-sprite-wrap pixel-ghost-ref" role="img" aria-label="${escapeHtml(pet.name)}"><div class="pixel-ghost" aria-hidden="true"><i class="ghost-eye ge1"></i><i class="ghost-eye ge2"></i><i class="ghost-mouth"></i><i class="ghost-cheek gc1"></i><i class="ghost-cheek gc2"></i></div></div>`;
+        return `<div class="pixel-sprite-wrap pixel-ghost-ref" role="img" aria-label="${escapeHtml(pet.name)}"><div class="pixel-ghost-complete" aria-hidden="true"><i class="g-eye g-eye-l"></i><i class="g-eye g-eye-r"></i><i class="g-cheek g-cheek-l"></i><i class="g-cheek g-cheek-r"></i><i class="g-mouth"></i></div></div>`;
     }
-
     function petArtHtml() {
         const pet = PETS[state.petId] || PETS.ghost;
         const classes = ['pet-avatar', `pet-${pet.id}`, `mood-${petMoodBand()}`, needsFood() ? 'state-hungry' : '', needsBath() ? 'state-dirty' : '', needsComfort() ? 'state-sad' : ''].filter(Boolean).join(' ');
