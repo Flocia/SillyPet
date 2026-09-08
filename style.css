@@ -2095,3 +2095,108 @@ body { overscroll-behavior: none !important; }
     height:192px!important;
   }
 }
+
+/* v3.6.0 — horizontal pet-game console layout */
+#st-pixel-pet-root .pet-window{
+  width: 980px !important;
+  height: 600px !important;
+  min-width: 980px !important;
+  min-height: 600px !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  padding: 12px !important;
+  transform-origin: center center !important;
+}
+
+#st-pixel-pet-root .pet-main-grid{
+  display:grid !important;
+  grid-template-columns: minmax(0, 1.45fr) minmax(330px, .85fr) !important;
+  align-items:stretch !important;
+  gap:10px !important;
+  height: 438px !important;
+  padding: 9px 2px 7px !important;
+}
+
+#st-pixel-pet-root .pet-stage{
+  height:438px !important;
+  min-height:438px !important;
+}
+
+#st-pixel-pet-root .pet-side{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:7px !important;
+  min-width:0 !important;
+  min-height:0 !important;
+}
+
+#st-pixel-pet-root .pet-card{
+  padding:8px !important;
+}
+
+#st-pixel-pet-root .pet-card .section-title{
+  margin-bottom:6px !important;
+}
+
+#st-pixel-pet-root .pet-choice{
+  min-height:65px !important;
+}
+
+#st-pixel-pet-root .stats-list{
+  gap:6px !important;
+}
+
+#st-pixel-pet-root .pet-tabs{
+  grid-template-columns:repeat(3,1fr) !important;
+  gap:7px !important;
+  padding:0 2px 4px !important;
+}
+
+#st-pixel-pet-root .pet-tab{
+  min-height:48px !important;
+}
+
+#st-pixel-pet-root .tab-content{
+  min-height:96px !important;
+  padding-bottom:0 !important;
+}
+
+#st-pixel-pet-root .action-grid{
+  gap:6px !important;
+}
+
+#st-pixel-pet-root .action-card{
+  min-height:70px !important;
+}
+
+/* A horizontal console should never scroll. Scale the entire machine when necessary. */
+html, body { overflow:hidden !important; }
+#st-pixel-pet-root .pixel-pet-panel{
+  overflow:hidden !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:6px !important;
+}
+#st-pixel-pet-root .pet-window{
+  transform:scale(var(--pp-device-scale,1)) !important;
+}
+
+/* Tablet / phone: still horizontal, but the whole device scales down uniformly. */
+@media (max-width: 1050px), (max-height: 640px){
+  #st-pixel-pet-root .pet-window{
+    transform:scale(var(--pp-device-scale,.85)) !important;
+  }
+}
+
+@media (max-width: 760px){
+  #st-pixel-pet-root .pet-window{
+    transform:scale(var(--pp-device-scale,.70)) !important;
+  }
+}
+
+@media (max-width: 560px){
+  #st-pixel-pet-root .pet-window{
+    transform:scale(var(--pp-device-scale,.58)) !important;
+  }
+}

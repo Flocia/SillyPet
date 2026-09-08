@@ -2,4 +2,4 @@
 
 Tamagotchi-style SillyTavern pet extension.
 
-v3.5.2 keeps the complete interaction set while using a compact fixed handheld layout.
+v3.6.0 uses a horizontal console layout: pet on the left, controls on the right, no scrolling.

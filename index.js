@@ -179,13 +179,14 @@
             bindEvents(host);
             if(!resizeBound){
                 window.addEventListener('resize', fitDeviceWindow, {passive:true});
+                window.addEventListener('resize', fitHorizontalDeviceWindow, {passive:true});
                 resizeBound = true;
             }
         }
         ensureLauncher();
         updatePanel();
         updateClock();
-        fitDeviceWindow();
+        fitHorizontalDeviceWindow();
         ensureClockTicker();
     }
 
