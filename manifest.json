@@ -1,5 +1,5 @@
 {
-  "display_name": "SillyPet · 白兔像素版",
+  "display_name": "SillyPet · 白色像素幽灵",
   "loading_order": 80,
   "requires": [],
   "optional": [],
@@ -7,8 +7,8 @@
   "js": "index.js",
   "css": "style.css",
   "author": "Flocia",
-  "version": "3.3.2",
+  "version": "3.4.0",
   "homePage": "https://github.com/Flocia/SillyPet",
   "auto_update": true,
-  "description": "Tamagotchi-style pixel pet with a cute white rabbit sprite."
+  "description": "Tamagotchi-style white pixel ghost pet."
 }

@@ -4,10 +4,10 @@
     const EXT_NAME = '[SillyPet]';
     const STORAGE_KEY = 'st_sillypet_v22';
     const CARE_KEY = `${STORAGE_KEY}_care`;
-    const VERSION = '3.3.2';
+    const VERSION = '3.4.0';
 
     const PETS = {
-        bunny: { id: 'bunny', name: '白兔团子', color: '#ffffff', shadow: '#a26f72', eye: '#452822', blush: '#f39fa9' },
+        ghost: { id: 'ghost', name: '白色幽灵', color: '#ffffff', shadow: '#d9d4dc', eye: '#2b2338', blush: '#f3b6c8' },
     };
 
     const FOODS = [
@@ -32,7 +32,7 @@
 
     const ACTION_LINES = {
         feed: {
-            bunny: ['咔嚓咔嚓！', '兔兔抱着食物不撒手。', '耳朵立起来啦！'],
+            ghost: ['呜啵啵！', '小幽灵吃饱啦。', '飘起来一点点～'],
             cat: ['喵呜…再来一点。', '小黑团满足地舔舔嘴。', '尾巴开心地晃了晃。'],
             dog: ['汪！开心开吃！', '小狗团子摇起尾巴。', '吃完还想蹭蹭你。'],
         },
@@ -51,15 +51,15 @@
     let keydownBound = false;
 
     function defaults() {
-        return { petId: 'bunny', name: '小白兔', mood: 80, clean: 85, fullness: 74, bornAt: Date.now(), lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
+        return { petId: 'ghost', name: '小白兔', mood: 80, clean: 85, fullness: 74, bornAt: Date.now(), lastTick: Date.now(), lastAction: '刚刚见面', lastActionType: 'idle' };
     }
     function loadState() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
             const merged = { ...defaults(), ...(raw ? JSON.parse(raw) : {}) };
             if (!merged.bornAt) merged.bornAt = Date.now();
-            merged.petId = 'bunny';
-            if (!merged.name || merged.name === '小黑团' || merged.name === '小团子') merged.name = '小白兔';
+            merged.petId = 'ghost';
+            if (!merged.name || merged.name === '小黑团' || merged.name === '小团子') merged.name = '小幽灵';
             return merged;
         } catch (error) {
             console.warn(`${EXT_NAME} state load failed`, error);
@@ -98,11 +98,11 @@
 
     // Reference-style pixel mascots: hand-authored 12px box-shadow sprites.
     function petSvgHtml(pet) {
-        return `<div class="pixel-sprite-wrap pixel-bunny-ref" role="img" aria-label="${escapeHtml(pet.name)}"><img class="pixel-rabbit-image" src="./rabbit.png" alt="${escapeHtml(pet.name)}" draggable="false"></div>`;
+        return `<div class="pixel-sprite-wrap pixel-ghost-ref" role="img" aria-label="${escapeHtml(pet.name)}"><div class="pixel-ghost" aria-hidden="true"><i class="ghost-eye ge1"></i><i class="ghost-eye ge2"></i><i class="ghost-mouth"></i><i class="ghost-cheek gc1"></i><i class="ghost-cheek gc2"></i></div></div>`;
     }
 
     function petArtHtml() {
-        const pet = PETS[state.petId] || PETS.bunny;
+        const pet = PETS[state.petId] || PETS.ghost;
         const classes = ['pet-avatar', `pet-${pet.id}`, `mood-${petMoodBand()}`, needsFood() ? 'state-hungry' : '', needsBath() ? 'state-dirty' : '', needsComfort() ? 'state-sad' : ''].filter(Boolean).join(' ');
         return `<div class="${classes}">
             ${petSvgHtml(pet)}
@@ -153,7 +153,7 @@
                     <div class="info-strip">
                         <button class="pet-info-pill" data-action="rename"><span class="pill-icon">♥</span><span><b id="info-name">${escapeHtml(state.name)}</b><small>名字</small></span><span class="pill-edit">✎</span></button>
                         <div class="pet-info-pill pet-switcher"><span class="switch-title">伙伴</span><div class="pet-choice-row">
-                            <button type="button" class="pet-choice active" data-action="select-pet" data-id="bunny"><span class="pet-choice-dot bunny-dot"></span><span>白兔</span></button>
+                            <button type="button" class="pet-choice active" data-action="select-pet" data-id="ghost"><span class="pet-choice-dot ghost-dot"></span><span>白色幽灵</span></button>
                         </div></div>
                         <div class="pet-info-pill stats-pill"><div class="mini-stat"><span>♥</span><strong id="mini-mood">${Math.round(state.mood)}</strong></div><div class="mini-stat"><span>✦</span><strong id="mini-clean">${Math.round(state.clean)}</strong></div><div class="mini-stat"><span>◒</span><strong id="mini-fullness">${Math.round(state.fullness)}</strong></div></div>
                     </div>
@@ -242,8 +242,8 @@
     function switchTab(tab){document.querySelectorAll('#st-pixel-pet-root .pet-tab').forEach(item=>item.classList.toggle('active',item.dataset.tab===tab));document.querySelectorAll('#st-pixel-pet-root .tab-content').forEach(item=>item.classList.toggle('active',item.id===`tab-${tab}`));}
     function ensureFresh(){applyDecay();}
     function selectPet(id){if(!PETS[id])return;ensureFresh();state.petId=id;state.mood=clamp(state.mood+rand(2,6));state.lastAction=`遇见了 ${PETS[id].name}！`;state.lastActionType='pet';saveState();recordCare();updatePanel(true);playFx('select');}
-    function doFeed(id){ensureFresh();const food=FOODS.find(x=>x.id===id);if(!food)return;const amount=rand(food.gain[0],food.gain[1]),moodGain=rand(4,9);state.fullness=clamp(state.fullness+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS.bunny.name} ${pick(ACTION_LINES.feed[state.petId])} 饱肚 +${amount} / 心情 +${moodGain}`;state.lastActionType='feed';saveState();recordCare();updatePanel(true);playFx('feed');}
-    function doBath(id){ensureFresh();const tool=TOOLS.find(x=>x.id===id);if(!tool)return;const amount=rand(tool.gain[0],tool.gain[1]),moodGain=rand(5,11);state.clean=clamp(state.clean+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS.bunny.name} ${pick(ACTION_LINES.bath)} 清洁 +${amount} / 心情 +${moodGain}`;state.lastActionType='bath';saveState();recordCare();updatePanel(true);playBathFx(id);}
+    function doFeed(id){ensureFresh();const food=FOODS.find(x=>x.id===id);if(!food)return;const amount=rand(food.gain[0],food.gain[1]),moodGain=rand(4,9);state.fullness=clamp(state.fullness+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS.ghost.name} ${pick(ACTION_LINES.feed[state.petId])} 饱肚 +${amount} / 心情 +${moodGain}`;state.lastActionType='feed';saveState();recordCare();updatePanel(true);playFx('feed');}
+    function doBath(id){ensureFresh();const tool=TOOLS.find(x=>x.id===id);if(!tool)return;const amount=rand(tool.gain[0],tool.gain[1]),moodGain=rand(5,11);state.clean=clamp(state.clean+amount);state.mood=clamp(state.mood+moodGain);state.lastAction=`${PETS.ghost.name} ${pick(ACTION_LINES.bath)} 清洁 +${amount} / 心情 +${moodGain}`;state.lastActionType='bath';saveState();recordCare();updatePanel(true);playBathFx(id);}
     function playBathFx(toolId){
         const root=document.getElementById('st-pixel-pet-root');
         const art=root?.querySelector('.pet-avatar');
@@ -265,7 +265,7 @@
         state.mood=clamp(state.mood+moodGain);
         state.clean=clamp(state.clean-rand(0,1));
         state.fullness=clamp(state.fullness-rand(0,1));
-        state.lastAction=`${PETS.bunny.name} ${pick(ACTION_LINES.play.bounce)} 心情 +${moodGain}`;
+        state.lastAction=`${PETS.ghost.name} ${pick(ACTION_LINES.play.bounce)} 心情 +${moodGain}`;
         state.lastActionType='bounce';
         saveState();recordCare();
         host.classList.remove('pet-bounce-ready');
@@ -381,7 +381,7 @@
         state.mood=clamp(state.mood+moodGain);
         state.clean=clamp(state.clean-rand(0,2));
         state.fullness=clamp(state.fullness-rand(0,1));
-        state.lastAction=`${PETS.bunny.name} ${pick(ACTION_LINES.play.catch)} 心情 +${moodGain}`;
+        state.lastAction=`${PETS.ghost.name} ${pick(ACTION_LINES.play.catch)} 心情 +${moodGain}`;
         state.lastActionType='catch';
         saveState();recordCare();
         host.classList.add('fx-catch');
@@ -415,7 +415,7 @@
         if(id==='pat'){
             const moodGain=rand(6,13);
             state.mood=clamp(state.mood+moodGain);
-            state.lastAction=`${PETS.bunny.name} 被轻轻摸摸头啦～ 心情 +${moodGain}`;
+            state.lastAction=`${PETS.ghost.name} 被轻轻摸摸头啦～ 心情 +${moodGain}`;
             state.lastActionType='pat';
             saveState();recordCare();updatePanel(true);playFx('pat');
             return;
@@ -441,7 +441,7 @@
     function renamePet(){const name=window.prompt('给你的宠物取个名字：',state.name||'小团子');if(name&&name.trim()){state.name=name.trim().slice(0,12);state.lastAction=`它的名字改成了「${state.name}」`;saveState();updatePanel(true);}}
     function getCareCount(){const value=Number(localStorage.getItem(CARE_KEY)||0);return Number.isFinite(value)?value:0;}
     function recordCare(){try{localStorage.setItem(CARE_KEY,String(getCareCount()+1));}catch(_) {}}
-    function updatePanel(withAnim=false){const panel=document.getElementById('st-pixel-pet-panel');if(!panel)return;ensureFresh();const artWrap=panel.querySelector('.pet-art-wrap');if(artWrap)artWrap.innerHTML=petArtHtml();const nameLabel=panel.querySelector('#pet-name-label'),statusText=panel.querySelector('#pet-status-text'),reaction=panel.querySelector('#pet-reaction'),careCount=panel.querySelector('#care-count'),infoName=panel.querySelector('#info-name'),infoSpecies=panel.querySelector('#info-species');if(nameLabel)nameLabel.textContent=state.name;if(infoName)infoName.textContent=state.name;if(infoSpecies)infoSpecies.textContent=PETS[state.petId]?.name||PETS.bunny.name;if(statusText)statusText.textContent=petFace().label;if(reaction)reaction.textContent=state.lastAction||'刚刚见面';if(careCount)careCount.textContent=getCareCount();const dot=panel.querySelector('#pet-status-dot');if(dot)dot.classList.toggle('alert',needsFood()||needsBath()||needsComfort());const stats=panel.querySelector('.stats-card .stats-list');if(stats)stats.innerHTML=`${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}`;panel.querySelectorAll('.pet-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.id===state.petId));if(withAnim){const art=panel.querySelector('.pet-avatar');if(art){art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add('react-positive');}}}
+    function updatePanel(withAnim=false){const panel=document.getElementById('st-pixel-pet-panel');if(!panel)return;ensureFresh();const artWrap=panel.querySelector('.pet-art-wrap');if(artWrap)artWrap.innerHTML=petArtHtml();const nameLabel=panel.querySelector('#pet-name-label'),statusText=panel.querySelector('#pet-status-text'),reaction=panel.querySelector('#pet-reaction'),careCount=panel.querySelector('#care-count'),infoName=panel.querySelector('#info-name'),infoSpecies=panel.querySelector('#info-species');if(nameLabel)nameLabel.textContent=state.name;if(infoName)infoName.textContent=state.name;if(infoSpecies)infoSpecies.textContent=PETS[state.petId]?.name||PETS.ghost.name;if(statusText)statusText.textContent=petFace().label;if(reaction)reaction.textContent=state.lastAction||'刚刚见面';if(careCount)careCount.textContent=getCareCount();const dot=panel.querySelector('#pet-status-dot');if(dot)dot.classList.toggle('alert',needsFood()||needsBath()||needsComfort());const stats=panel.querySelector('.stats-card .stats-list');if(stats)stats.innerHTML=`${statBar('心情','♡',state.mood,'mood')}${statBar('清洁','✦',state.clean,'clean')}${statBar('饱肚','◒',state.fullness,'fullness')}`;panel.querySelectorAll('.pet-choice').forEach(btn=>btn.classList.toggle('active',btn.dataset.id===state.petId));if(withAnim){const art=panel.querySelector('.pet-avatar');if(art){art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add('react-positive');}}}
     function playFx(type){const root=document.getElementById('st-pixel-pet-root'),art=root?.querySelector('.pet-avatar');if(!root||!art)return;root.classList.remove('fx-pat','fx-ball','fx-rope','fx-bounce','fx-roll','fx-catch','fx-feed','fx-bath','fx-select','fx-bath-soap','fx-bath-shower');void root.offsetWidth;root.classList.add(`fx-${type}`);art.classList.remove('react','react-positive');void art.offsetWidth;art.classList.add(type==='bounce'?'react':'react-positive');setTimeout(()=>root.classList.remove(`fx-${type}`),type==='bounce'?1500:900);}
     let clockTimer = null;
     function getAgeDays(){ return Math.max(1, Math.floor((Date.now() - (state.bornAt || Date.now())) / 86400000) + 1); }
