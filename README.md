@@ -1,5 +1,5 @@
 # SillyPet
 
-White pixel ghost Tamagotchi extension for SillyTavern.
+Tamagotchi-style SillyTavern pet extension.
 
-Version 3.4.2 fixes incomplete/clipped pet display.
+v3.5.0: fixed handheld game-device layout with the full interface visible without scrolling.

@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.4.2
-- Rebuilt the ghost sprite with a larger complete pixel silhouette.
-- Centered the sprite in the LCD stage to prevent clipping.
-- Added robust desktop/mobile scaling.
+## 3.5.0
+- Converted the pet window to a fixed handheld-game layout.
+- Removed internal scrolling so the complete interface stays visible.
+- Added responsive sizing for Android tablets and phones.
