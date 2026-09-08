@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.4.0
-- Replaced the rabbit with a white pixel ghost.
-- Kept the existing Tamagotchi UI, launcher, and interactions.
-- Added a 12px box-shadow pixel sprite with oversized cute eyes and ghost silhouette.
+## 3.4.1
+- Fixed white pixel ghost being clipped in the LCD stage.
+- Added an explicit sprite bounds box and mobile scaling.
+- Preserved the existing UI, launcher and interactions.

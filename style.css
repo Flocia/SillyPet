@@ -1733,52 +1733,119 @@
 }
 
 
-/* v3.4.0 — White pixel ghost, inspired by classic handheld mascot sprites. */
-.pixel-ghost-ref{
+
+/* v3.4.1 — ghost visibility/layout hotfix */
+#st-pixel-pet-root .pet-stage{overflow:hidden!important;}
+#st-pixel-pet-root .pet-art-wrap{
+  overflow:visible!important;
+  bottom:78px!important;
+  width:330px!important;
+  height:300px!important;
+  z-index:30!important;
+}
+#st-pixel-pet-root .pet-avatar{
+  overflow:visible!important;
+  width:260px!important;
+  height:280px!important;
+  left:0!important;
+  top:0!important;
+  z-index:31!important;
+}
+#st-pixel-pet-root .pet-avatar .pixel-ghost-ref{
   position:absolute!important;
-  left:50%!important; bottom:34px!important;
-  width:240px!important; height:300px!important;
+  left:50%!important;
+  top:8px!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:150px!important;
+  height:156px!important;
   transform:translateX(-50%)!important;
-  display:grid!important; place-items:end center!important;
-  pointer-events:none!important; z-index:8!important;
+  display:block!important;
+  overflow:visible!important;
+  z-index:40!important;
 }
-.pixel-ghost{
-  position:relative!important;
-  width:12px!important; height:12px!important;
-  margin:0 auto!important;
-  transform:scale(1)!important;
-  image-rendering:pixelated!important;
-  image-rendering:crisp-edges!important;
+#st-pixel-pet-root .pet-avatar .pixel-ghost{
+  position:absolute!important;
+  left:6px!important;
+  top:0!important;
+  width:12px!important;
+  height:12px!important;
+  margin:0!important;
+  transform:none!important;
+  display:block!important;
+  overflow:visible!important;
   background:transparent!important;
-  filter:drop-shadow(0 5px 0 rgba(43,35,56,.16));
-  /* 12px grid, enlarged with box-shadow pixels */
   box-shadow:
-    24px 0 #2b2338, 36px 0 #2b2338, 48px 0 #2b2338, 60px 0 #2b2338, 72px 0 #2b2338, 84px 0 #2b2338, 96px 0 #2b2338,
-    12px 12px #2b2338, 108px 12px #2b2338,
-    0 24px #2b2338, 12px 24px #ffffff, 24px 24px #ffffff, 36px 24px #ffffff, 48px 24px #ffffff, 60px 24px #ffffff, 72px 24px #ffffff, 84px 24px #ffffff, 96px 24px #ffffff, 108px 24px #2b2338,
-    0 36px #2b2338, 12px 36px #ffffff, 24px 36px #ffffff, 36px 36px #ffffff, 48px 36px #ffffff, 60px 36px #ffffff, 72px 36px #ffffff, 84px 36px #ffffff, 96px 36px #ffffff, 108px 36px #2b2338,
-    0 48px #2b2338, 12px 48px #ffffff, 24px 48px #ffffff, 36px 48px #ffffff, 48px 48px #ffffff, 60px 48px #ffffff, 72px 48px #ffffff, 84px 48px #ffffff, 96px 48px #ffffff, 108px 48px #2b2338,
-    0 60px #2b2338, 12px 60px #ffffff, 24px 60px #ffffff, 36px 60px #ffffff, 48px 60px #ffffff, 60px 60px #ffffff, 72px 60px #ffffff, 84px 60px #ffffff, 96px 60px #ffffff, 108px 60px #2b2338,
-    0 72px #2b2338, 12px 72px #ffffff, 24px 72px #ffffff, 36px 72px #ffffff, 48px 72px #ffffff, 60px 72px #ffffff, 72px 72px #ffffff, 84px 72px #ffffff, 96px 72px #ffffff, 108px 72px #2b2338,
-    0 84px #2b2338, 12px 84px #ffffff, 24px 84px #ffffff, 36px 84px #ffffff, 48px 84px #ffffff, 60px 84px #ffffff, 72px 84px #ffffff, 84px 84px #ffffff, 96px 84px #ffffff, 108px 84px #2b2338,
-    12px 96px #2b2338, 24px 96px #ffffff, 36px 96px #ffffff, 48px 96px #ffffff, 60px 96px #ffffff, 72px 96px #ffffff, 84px 96px #ffffff, 96px 96px #2b2338,
-    24px 108px #2b2338, 36px 108px #ffffff, 48px 108px #ffffff, 60px 108px #ffffff, 72px 108px #ffffff, 84px 108px #ffffff, 96px 108px #2b2338;
-  animation:ghostFloat 2.2s steps(2,end) infinite;
+    24px 0 #2b2338,36px 0 #2b2338,48px 0 #2b2338,60px 0 #2b2338,72px 0 #2b2338,84px 0 #2b2338,96px 0 #2b2338,
+    12px 12px #2b2338,108px 12px #2b2338,
+    0 24px #2b2338,12px 24px #ffffff,24px 24px #ffffff,36px 24px #ffffff,48px 24px #ffffff,60px 24px #ffffff,72px 24px #ffffff,84px 24px #ffffff,96px 24px #ffffff,108px 24px #2b2338,
+    0 36px #2b2338,12px 36px #ffffff,24px 36px #ffffff,36px 36px #ffffff,48px 36px #ffffff,60px 36px #ffffff,72px 36px #ffffff,84px 36px #ffffff,96px 36px #ffffff,108px 36px #2b2338,
+    0 48px #2b2338,12px 48px #ffffff,24px 48px #ffffff,36px 48px #ffffff,48px 48px #ffffff,60px 48px #ffffff,72px 48px #ffffff,84px 48px #ffffff,96px 48px #ffffff,108px 48px #2b2338,
+    0 60px #2b2338,12px 60px #ffffff,24px 60px #ffffff,36px 60px #ffffff,48px 60px #ffffff,60px 60px #ffffff,72px 60px #ffffff,84px 60px #ffffff,96px 60px #ffffff,108px 60px #2b2338,
+    0 72px #2b2338,12px 72px #ffffff,24px 72px #ffffff,36px 72px #ffffff,48px 72px #ffffff,60px 72px #ffffff,72px 72px #ffffff,84px 72px #ffffff,96px 72px #ffffff,108px 72px #2b2338,
+    0 84px #2b2338,12px 84px #ffffff,24px 84px #ffffff,36px 84px #ffffff,48px 84px #ffffff,60px 84px #ffffff,72px 84px #ffffff,84px 84px #ffffff,96px 84px #ffffff,108px 84px #2b2338,
+    12px 96px #2b2338,24px 96px #ffffff,36px 96px #ffffff,48px 96px #ffffff,60px 96px #ffffff,72px 96px #ffffff,84px 96px #ffffff,96px 96px #2b2338,
+    24px 108px #2b2338,36px 108px #ffffff,48px 108px #ffffff,60px 108px #ffffff,72px 108px #ffffff,84px 108px #ffffff,96px 108px #2b2338,
+    36px 120px #2b2338,48px 120px #ffffff,60px 120px #ffffff,72px 120px #ffffff,84px 120px #ffffff,
+    24px 132px #2b2338,36px 132px #ffffff,48px 132px #2b2338,72px 132px #2b2338,84px 132px #ffffff,96px 132px #2b2338;
+  animation:ghostFloatFixed 2.2s steps(2,end) infinite;
 }
-.pixel-ghost::before{
-  content:""; position:absolute; width:12px; height:12px; left:24px; top:36px; background:#f2edf2;
-  box-shadow:72px 0 #f2edf2, 36px 12px #f8f4f7, 48px 12px #f8f4f7;
-  z-index:1;
+#st-pixel-pet-root .pixel-ghost::before{
+  content:"";
+  position:absolute;
+  left:24px!important;
+  top:36px!important;
+  width:12px!important;
+  height:12px!important;
+  background:#f2edf2!important;
+  box-shadow:72px 0 #f2edf2,36px 12px #f8f4f7,48px 12px #f8f4f7!important;
 }
-.ghost-eye{position:absolute;width:12px;height:24px;background:#2b2338;z-index:4;}
-.ghost-eye.ge1{left:36px;top:52px;box-shadow:3px 4px 0 #fff;}
-.ghost-eye.ge2{left:72px;top:52px;box-shadow:3px 4px 0 #fff;}
-.ghost-mouth{position:absolute;left:54px;top:78px;width:12px;height:12px;border-bottom:4px solid #2b2338;border-right:4px solid transparent;z-index:4;transform:rotate(45deg)}
-.ghost-cheek{position:absolute;top:76px;width:12px;height:8px;background:#f3b6c8;z-index:3}
-.ghost-cheek.gc1{left:18px}.ghost-cheek.gc2{left:90px}
-@keyframes ghostFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.pixel-pet-panel .pixel-ghost-ref{pointer-events:none!important}
-.pet-avatar.pet-ghost .pixel-ghost{display:block!important}
-.pet-choice.active .ghost-dot{background:#f3b6c8!important}
-@media(max-width:760px){.pixel-ghost-ref{transform:translateX(-50%) scale(.9)!important;transform-origin:bottom center!important}}
-@media(max-width:440px){.pixel-ghost-ref{transform:translateX(-50%) scale(.78)!important}}
+#st-pixel-pet-root .pixel-ghost .ghost-eye{
+  position:absolute!important;
+  width:12px!important;height:24px!important;
+  background:#2b2338!important;
+  z-index:4!important;
+}
+#st-pixel-pet-root .pixel-ghost .ghost-eye.ge1{left:36px!important;top:52px!important;}
+#st-pixel-pet-root .pixel-ghost .ghost-eye.ge2{left:72px!important;top:52px!important;}
+#st-pixel-pet-root .pixel-ghost .ghost-eye::after{
+  content:"";
+  position:absolute;
+  width:4px;height:4px;
+  left:2px;top:3px;
+  background:#fff;
+}
+#st-pixel-pet-root .pixel-ghost .ghost-mouth{
+  position:absolute!important;left:54px!important;top:82px!important;
+  width:12px!important;height:10px!important;
+  border-bottom:4px solid #2b2338!important;
+  border-right:4px solid transparent!important;
+  z-index:5!important;
+  transform:rotate(45deg)!important;
+}
+#st-pixel-pet-root .pixel-ghost .ghost-cheek{
+  position:absolute!important;top:76px!important;
+  width:12px!important;height:8px!important;
+  background:#f3b6c8!important;z-index:5!important;
+}
+#st-pixel-pet-root .pixel-ghost .ghost-cheek.gc1{left:18px!important}
+#st-pixel-pet-root .pixel-ghost .ghost-cheek.gc2{left:90px!important}
+@keyframes ghostFloatFixed{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+@media(max-width:760px){
+  #st-pixel-pet-root .pet-art-wrap{bottom:64px!important;width:290px!important;height:285px!important}
+  #st-pixel-pet-root .pet-avatar{width:230px!important;height:275px!important}
+  #st-pixel-pet-root .pet-avatar .pixel-ghost-ref{
+    width:136px!important;height:145px!important;top:6px!important;
+    transform:translateX(-50%) scale(.9)!important;
+  }
+}
+@media(max-width:440px){
+  #st-pixel-pet-root .pet-art-wrap{bottom:58px!important;width:260px!important;height:270px!important}
+  #st-pixel-pet-root .pet-avatar{width:215px!important;height:260px!important}
+  #st-pixel-pet-root .pet-avatar .pixel-ghost-ref{
+    transform:translateX(-50%) scale(.78)!important;
+  }
+}
